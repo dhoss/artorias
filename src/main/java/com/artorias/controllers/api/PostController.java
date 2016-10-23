@@ -1,4 +1,4 @@
-package com.artorias.controllers;
+package com.artorias.controllers.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
