@@ -130,6 +130,11 @@
                             <packageName>com.artorias.database.jooq</packageName>
                             <directory>src/main/java/com/artorias/</directory>
                         </target>
+                        <generate>
+                            <fluentSetters>false</fluentSetters>
+                            <records>true</records>
+                            <pojos>true</pojos>
+                        </generate>
                     </generator>
                 </configuration>
             </plugin>
