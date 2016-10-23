@@ -4,8 +4,13 @@
 package com.artorias.database.jooq;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.annotation.Generated;
 
+import org.jooq.Schema;
 import org.jooq.impl.CatalogImpl;
 
 
@@ -22,7 +27,7 @@ import org.jooq.impl.CatalogImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class DefaultCatalog extends CatalogImpl {
 
-    private static final long serialVersionUID = 1419036601;
+    private static final long serialVersionUID = -1718336630;
 
     /**
      * The reference instance of <code></code>
@@ -30,9 +35,26 @@ public class DefaultCatalog extends CatalogImpl {
     public static final DefaultCatalog DEFAULT_CATALOG = new DefaultCatalog();
 
     /**
+     * The schema <code>blog</code>.
+     */
+    public final Blog BLOG = com.artorias.database.jooq.Blog.BLOG;
+
+    /**
      * No further instances allowed
      */
     private DefaultCatalog() {
         super("");
+    }
+
+    @Override
+    public final List<Schema> getSchemas() {
+        List result = new ArrayList();
+        result.addAll(getSchemas0());
+        return result;
+    }
+
+    private final List<Schema> getSchemas0() {
+        return Arrays.<Schema>asList(
+            Blog.BLOG);
     }
 }

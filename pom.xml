@@ -113,7 +113,7 @@
                     <!-- JDBC connection parameters -->
                     <jdbc>
                         <driver>org.postgresql.Driver</driver>
-                        <url>jdbc:postgresql:postgres</url>
+                        <url>jdbc:postgresql:artorias</url>
                         <user>artorias</user>
                         <password>artorias</password>
                     </jdbc>
@@ -128,10 +128,10 @@
                         </database>
                         <target>
                             <packageName>com.artorias.database.jooq</packageName>
-                            <directory>src/main/java/com/artorias/</directory>
+                            <directory>src/main/java/</directory>
                         </target>
                         <generate>
-                            <fluentSetters>false</fluentSetters>
+                            <fluentSetters>true</fluentSetters>
                             <records>true</records>
                             <pojos>true</pojos>
                         </generate>
