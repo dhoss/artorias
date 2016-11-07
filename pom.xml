@@ -23,6 +23,12 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <reactor.version>3.0.3.BUILD-SNAPSHOT</reactor.version>
+        <artorias.db.schema>blog</artorias.db.schema>
+        <artorias.db.url>jdbc:postgresql://localhost:5432/artorias?currentSchema=${artorias.db.schema}</artorias.db.url>
+        <artorias.db.user>artorias</artorias.db.user>
+        <artorias.db.password>artorias</artorias.db.password>
+        <artorias.db.bootstrap-user>postgres</artorias.db.bootstrap-user>
+        <artorias.db.bootstrap-password></artorias.db.bootstrap-password>
     </properties>
 
     <dependencies>
@@ -79,6 +85,11 @@
             <artifactId>jooq</artifactId>
             <version>3.8.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+            <version>4.0.3</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -113,9 +124,9 @@
                     <!-- JDBC connection parameters -->
                     <jdbc>
                         <driver>org.postgresql.Driver</driver>
-                        <url>jdbc:postgresql:artorias</url>
-                        <user>artorias</user>
-                        <password>artorias</password>
+                        <url>${artorias.db.url}</url>
+                        <user>${artorias.db.user}</user>
+                        <password>${artorias.db.password}</password>
                     </jdbc>
 
                     <!-- Generator parameters -->
@@ -124,7 +135,7 @@
                             <name>org.jooq.util.postgres.PostgresDatabase</name>
                             <includes>.*</includes>
                             <excludes></excludes>
-                            <inputSchema>blog</inputSchema>
+                            <inputSchema>${artorias.db.schema}</inputSchema>
                         </database>
                         <target>
                             <packageName>com.artorias.database.jooq</packageName>
@@ -136,6 +147,19 @@
                             <pojos>true</pojos>
                         </generate>
                     </generator>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>4.0.3</version>
+                <configuration>
+                    <user>${artorias.db.bootstrap-user}</user>
+                    <password>${artorias.db.bootstrap-password}</password>
+                    <url>${artorias.db.url}</url>
+                    <schemas>
+                        <schema>${artorias.db.schema}</schema>
+                    </schemas>
                 </configuration>
             </plugin>
         </plugins>
