@@ -5,12 +5,15 @@ package com.artorias.database.jooq;
 
 
 import com.artorias.database.jooq.tables.Author;
+import com.artorias.database.jooq.tables.Post;
 import com.artorias.database.jooq.tables.SchemaVersion;
 import com.artorias.database.jooq.tables.records.AuthorRecord;
+import com.artorias.database.jooq.tables.records.PostRecord;
 import com.artorias.database.jooq.tables.records.SchemaVersionRecord;
 
 import javax.annotation.Generated;
 
+import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.UniqueKey;
 import org.jooq.impl.AbstractKeys;
@@ -35,18 +38,21 @@ public class Keys {
     // -------------------------------------------------------------------------
 
     public static final Identity<AuthorRecord, Integer> IDENTITY_AUTHOR = Identities0.IDENTITY_AUTHOR;
+    public static final Identity<PostRecord, Integer> IDENTITY_POST = Identities0.IDENTITY_POST;
 
     // -------------------------------------------------------------------------
     // UNIQUE and PRIMARY KEY definitions
     // -------------------------------------------------------------------------
 
     public static final UniqueKey<AuthorRecord> AUTHOR_PKEY = UniqueKeys0.AUTHOR_PKEY;
+    public static final UniqueKey<PostRecord> POST_PKEY = UniqueKeys0.POST_PKEY;
     public static final UniqueKey<SchemaVersionRecord> SCHEMA_VERSION_PK = UniqueKeys0.SCHEMA_VERSION_PK;
 
     // -------------------------------------------------------------------------
     // FOREIGN KEY definitions
     // -------------------------------------------------------------------------
 
+    public static final ForeignKey<PostRecord, AuthorRecord> POST__POST_AUTHOR_ID_FKEY = ForeignKeys0.POST__POST_AUTHOR_ID_FKEY;
 
     // -------------------------------------------------------------------------
     // [#1459] distribute members to avoid static initialisers > 64kb
@@ -54,10 +60,16 @@ public class Keys {
 
     private static class Identities0 extends AbstractKeys {
         public static Identity<AuthorRecord, Integer> IDENTITY_AUTHOR = createIdentity(Author.AUTHOR, Author.AUTHOR.AUTHOR_ID);
+        public static Identity<PostRecord, Integer> IDENTITY_POST = createIdentity(Post.POST, Post.POST.POST_ID);
     }
 
     private static class UniqueKeys0 extends AbstractKeys {
         public static final UniqueKey<AuthorRecord> AUTHOR_PKEY = createUniqueKey(Author.AUTHOR, "author_pkey", Author.AUTHOR.AUTHOR_ID);
+        public static final UniqueKey<PostRecord> POST_PKEY = createUniqueKey(Post.POST, "post_pkey", Post.POST.POST_ID);
         public static final UniqueKey<SchemaVersionRecord> SCHEMA_VERSION_PK = createUniqueKey(SchemaVersion.SCHEMA_VERSION, "schema_version_pk", SchemaVersion.SCHEMA_VERSION.INSTALLED_RANK);
+    }
+
+    private static class ForeignKeys0 extends AbstractKeys {
+        public static final ForeignKey<PostRecord, AuthorRecord> POST__POST_AUTHOR_ID_FKEY = createForeignKey(com.artorias.database.jooq.Keys.AUTHOR_PKEY, Post.POST, "post__post_author_id_fkey", Post.POST.AUTHOR_ID);
     }
 }

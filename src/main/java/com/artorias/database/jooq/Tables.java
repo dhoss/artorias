@@ -5,6 +5,7 @@ package com.artorias.database.jooq;
 
 
 import com.artorias.database.jooq.tables.Author;
+import com.artorias.database.jooq.tables.Post;
 import com.artorias.database.jooq.tables.SchemaVersion;
 
 import javax.annotation.Generated;
@@ -27,6 +28,11 @@ public class Tables {
      * The table <code>blog.author</code>.
      */
     public static final Author AUTHOR = com.artorias.database.jooq.tables.Author.AUTHOR;
+
+    /**
+     * The table <code>blog.post</code>.
+     */
+    public static final Post POST = com.artorias.database.jooq.tables.Post.POST;
 
     /**
      * The table <code>blog.schema_version</code>.

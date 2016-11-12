@@ -1,0 +1,24 @@
+outline of features
+
+1. posts
+  - publishing queue
+    - posts go in a publishing queue and are published on their publish_on value/column
+  - threaded comments
+    - cte for retrieving threaded comments
+  - post/user admin
+    - delete/hide posts
+    - ban users
+  - tags/categories
+  - sort by date/comments/published on
+  - "share" post
+    - tweet
+    - facebook
+  - search posts
+  - similar posts
+  - activity audit log
+2. users
+  - social network sign in
+    - github
+    - facebook
+    - twitter
+3. extendability
