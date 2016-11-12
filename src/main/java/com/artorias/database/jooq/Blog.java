@@ -4,7 +4,8 @@
 package com.artorias.database.jooq;
 
 
-import com.artorias.database.jooq.tables.Post;
+import com.artorias.database.jooq.tables.Author;
+import com.artorias.database.jooq.tables.SchemaVersion;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,7 +32,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Blog extends SchemaImpl {
 
-    private static final long serialVersionUID = 1732748915;
+    private static final long serialVersionUID = -1675371721;
 
     /**
      * The reference instance of <code>blog</code>
@@ -39,9 +40,14 @@ public class Blog extends SchemaImpl {
     public static final Blog BLOG = new Blog();
 
     /**
-     * The table <code>blog.post</code>.
+     * The table <code>blog.author</code>.
      */
-    public final Post POST = com.artorias.database.jooq.tables.Post.POST;
+    public final Author AUTHOR = com.artorias.database.jooq.tables.Author.AUTHOR;
+
+    /**
+     * The table <code>blog.schema_version</code>.
+     */
+    public final SchemaVersion SCHEMA_VERSION = com.artorias.database.jooq.tables.SchemaVersion.SCHEMA_VERSION;
 
     /**
      * No further instances allowed
@@ -68,7 +74,7 @@ public class Blog extends SchemaImpl {
 
     private final List<Sequence<?>> getSequences0() {
         return Arrays.<Sequence<?>>asList(
-            Sequences.POST_ID_SEQ);
+            Sequences.AUTHOR_AUTHOR_ID_SEQ);
     }
 
     @Override
@@ -80,6 +86,7 @@ public class Blog extends SchemaImpl {
 
     private final List<Table<?>> getTables0() {
         return Arrays.<Table<?>>asList(
-            Post.POST);
+            Author.AUTHOR,
+            SchemaVersion.SCHEMA_VERSION);
     }
 }

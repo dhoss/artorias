@@ -24,7 +24,7 @@ import org.jooq.impl.SequenceImpl;
 public class Sequences {
 
     /**
-     * The sequence <code>blog.post_id_seq</code>
+     * The sequence <code>blog.author_author_id_seq</code>
      */
-    public static final Sequence<Long> POST_ID_SEQ = new SequenceImpl<Long>("post_id_seq", Blog.BLOG, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
+    public static final Sequence<Long> AUTHOR_AUTHOR_ID_SEQ = new SequenceImpl<Long>("author_author_id_seq", Blog.BLOG, org.jooq.impl.SQLDataType.BIGINT.nullable(false));
 }

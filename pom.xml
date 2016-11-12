@@ -27,8 +27,8 @@
         <artorias.db.url>jdbc:postgresql://localhost:5432/artorias?currentSchema=${artorias.db.schema}</artorias.db.url>
         <artorias.db.user>artorias</artorias.db.user>
         <artorias.db.password>artorias</artorias.db.password>
-        <artorias.db.bootstrap-user>postgres</artorias.db.bootstrap-user>
-        <artorias.db.bootstrap-password></artorias.db.bootstrap-password>
+        <artorias.db.bootstrap-user>artorias</artorias.db.bootstrap-user>
+        <artorias.db.bootstrap-password>artorias</artorias.db.bootstrap-password>
     </properties>
 
     <dependencies>
