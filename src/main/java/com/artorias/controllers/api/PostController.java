@@ -12,9 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -27,19 +25,14 @@ public class PostController {
     @Autowired
     private DSLContext dsl;
 
-    @Autowired
-    private ModelMapper mapper;
+
 
     @Autowired
     private DefaultPostService postService;
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PostDTO> list() {
-        java.lang.reflect.Type targetListType = new TypeToken<List<PostDTO>>() {}.getType();
-        List<Post> posts = postService.list(1);
-        log.debug("POSTS " + posts);
-        List<PostDTO> mappedPosts = mapper.map(posts, targetListType);
-        return mappedPosts;
+    public List<PostDTO> list(@RequestParam(name="page", defaultValue = "1") int page) {
+        return postService.listAsDto(page);
     }
 }

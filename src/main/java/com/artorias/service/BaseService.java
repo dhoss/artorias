@@ -7,6 +7,8 @@ import org.jooq.Table;
 import org.jooq.DSLContext;
 import org.jooq.UpdatableRecord;
 import org.jooq.impl.DSL;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +21,12 @@ import java.util.List;
 
 @Slf4j
 @Service
-public abstract class BaseService<R extends Record, T extends Table<R>, E> {
+public abstract class BaseService<R extends Record, T extends Table<R>, E, DT> {
     protected final int pageSize;
 
     private Class<E> recordClass;
+
+
 
     @Autowired
     DSLContext dsl;
@@ -87,6 +91,8 @@ public abstract class BaseService<R extends Record, T extends Table<R>, E> {
                 .fetchOne().getValue(0);
     }
 
+
+
     // to be implemented by the inheriting class
 
     protected abstract T table();
@@ -94,4 +100,7 @@ public abstract class BaseService<R extends Record, T extends Table<R>, E> {
     protected abstract R buildRecord(E e);
 
     public abstract E find(String n);
+
+    public abstract List<DT> asDto(List<E> p);
+
 }
