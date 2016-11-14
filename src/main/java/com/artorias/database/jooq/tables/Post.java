@@ -37,7 +37,7 @@ import org.jooq.impl.TableImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Post extends TableImpl<PostRecord> {
 
-    private static final long serialVersionUID = -314064689;
+    private static final long serialVersionUID = -1265612810;
 
     /**
      * The reference instance of <code>blog.post</code>
@@ -61,6 +61,11 @@ public class Post extends TableImpl<PostRecord> {
      * The column <code>blog.post.title</code>.
      */
     public final TableField<PostRecord, String> TITLE = createField("title", org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
+
+    /**
+     * The column <code>blog.post.slug</code>.
+     */
+    public final TableField<PostRecord, String> SLUG = createField("slug", org.jooq.impl.SQLDataType.CLOB.nullable(false), this, "");
 
     /**
      * The column <code>blog.post.body</code>.

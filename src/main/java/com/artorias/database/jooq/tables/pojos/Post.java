@@ -23,10 +23,11 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Post implements Serializable {
 
-    private static final long serialVersionUID = 1913629043;
+    private static final long serialVersionUID = 853845789;
 
     private Integer   postId;
     private String    title;
+    private String    slug;
     private String    body;
     private Integer   authorId;
     private Timestamp createdOn;
@@ -38,6 +39,7 @@ public class Post implements Serializable {
     public Post(Post value) {
         this.postId = value.postId;
         this.title = value.title;
+        this.slug = value.slug;
         this.body = value.body;
         this.authorId = value.authorId;
         this.createdOn = value.createdOn;
@@ -48,6 +50,7 @@ public class Post implements Serializable {
     public Post(
         Integer   postId,
         String    title,
+        String    slug,
         String    body,
         Integer   authorId,
         Timestamp createdOn,
@@ -56,6 +59,7 @@ public class Post implements Serializable {
     ) {
         this.postId = postId;
         this.title = title;
+        this.slug = slug;
         this.body = body;
         this.authorId = authorId;
         this.createdOn = createdOn;
@@ -78,6 +82,15 @@ public class Post implements Serializable {
 
     public Post setTitle(String title) {
         this.title = title;
+        return this;
+    }
+
+    public String getSlug() {
+        return this.slug;
+    }
+
+    public Post setSlug(String slug) {
+        this.slug = slug;
         return this;
     }
 
@@ -132,6 +145,7 @@ public class Post implements Serializable {
 
         sb.append(postId);
         sb.append(", ").append(title);
+        sb.append(", ").append(slug);
         sb.append(", ").append(body);
         sb.append(", ").append(authorId);
         sb.append(", ").append(createdOn);
