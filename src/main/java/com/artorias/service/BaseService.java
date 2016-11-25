@@ -22,19 +22,24 @@ import java.util.List;
 @Slf4j
 @Service
 public abstract class BaseService<R extends Record, T extends Table<R>, E, DT> {
-    protected final int pageSize;
+    protected int pageSize;
 
     private Class<E> recordClass;
 
-
+    @Autowired
+    protected DSLContext dsl;
 
     @Autowired
-    DSLContext dsl;
+    protected ModelMapper mapper;
 
     public BaseService() {
-        this.recordClass = (Class<E>) ((ParameterizedType) getClass()
-                .getGenericSuperclass()).getActualTypeArguments()[0];
-        this.pageSize = 50;
+        setDefaults();
+    }
+
+    public BaseService(DSLContext d, ModelMapper m) {
+        setDefaults();
+        this.dsl = d;
+        this.mapper = m;
     }
 
     protected int getPage(String pageParam) {
@@ -51,13 +56,11 @@ public abstract class BaseService<R extends Record, T extends Table<R>, E, DT> {
         storeRecord(record);
     }
 
-
     private void storeRecord(E record) {
         UpdatableRecord r = (UpdatableRecord) buildRecord(record);
         r.store();
     }
     ///////////////////
-
 
     // READ ///////////
     public List<E> list(int pageNumber) {
@@ -91,8 +94,6 @@ public abstract class BaseService<R extends Record, T extends Table<R>, E, DT> {
                 .fetchOne().getValue(0);
     }
 
-
-
     // to be implemented by the inheriting class
 
     protected abstract T table();
@@ -103,4 +104,9 @@ public abstract class BaseService<R extends Record, T extends Table<R>, E, DT> {
 
     public abstract List<DT> asDto(List<E> p);
 
+    private void setDefaults() {
+        this.recordClass = (Class<E>) ((ParameterizedType) getClass()
+                .getGenericSuperclass()).getActualTypeArguments()[0];
+        this.pageSize = 50;
+    }
 }

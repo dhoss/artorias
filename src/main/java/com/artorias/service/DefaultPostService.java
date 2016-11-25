@@ -3,6 +3,7 @@ package com.artorias.service;
 import com.artorias.database.jooq.tables.pojos.Post;
 import com.artorias.database.jooq.tables.records.PostRecord;
 import com.artorias.dto.PostDTO;
+import org.jooq.DSLContext;
 import org.jvnet.hk2.annotations.Service;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -21,6 +22,14 @@ public class DefaultPostService extends BaseService<PostRecord, com.artorias.dat
 
     @Autowired
     private ModelMapper mapper;
+
+    @Autowired
+    private DSLContext dsl;
+
+    public DefaultPostService(DSLContext d, ModelMapper map) {
+        this.mapper = map;
+        this.dsl = d;
+    }
 
     @Override
     public Post find(String slug) {
