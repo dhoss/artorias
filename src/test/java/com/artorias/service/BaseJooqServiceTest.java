@@ -11,7 +11,7 @@ import org.testng.annotations.*;
  */
 
 @Test(enabled=false)
-public class BaseServiceTest {
+public class BaseJooqServiceTest {
 
     private Record mockRecord;
 

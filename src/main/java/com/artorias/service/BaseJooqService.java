@@ -21,7 +21,7 @@ import java.util.List;
 
 @Slf4j
 @Service
-public abstract class BaseService<R extends Record, T extends Table<R>, E, DT> {
+public abstract class BaseJooqService<R extends Record, T extends Table<R>, E, DT> {
     protected int pageSize;
 
     private Class<E> recordClass;
@@ -32,11 +32,11 @@ public abstract class BaseService<R extends Record, T extends Table<R>, E, DT> {
     @Autowired
     protected ModelMapper mapper;
 
-    public BaseService() {
+    public BaseJooqService() {
         setDefaults();
     }
 
-    public BaseService(DSLContext d, ModelMapper m) {
+    public BaseJooqService(DSLContext d, ModelMapper m) {
         setDefaults();
         this.dsl = d;
         this.mapper = m;

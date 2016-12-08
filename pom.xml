@@ -137,6 +137,12 @@
             <artifactId>modelmapper-spring</artifactId>
             <version>0.7.5</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.9.6</version>
+        </dependency>
         <!-- https://mvnrepository.com/artifact/org.mockito/mockito-all -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -204,6 +210,36 @@
                             <includes>.*</includes>
                             <excludes></excludes>
                             <inputSchema>${artorias.db.schema}</inputSchema>
+                            <!-- Then, associate custom types with database columns -->
+                            <forcedTypes>
+                                <forcedType>
+
+                                    <!-- Specify the Java type of your custom type. This corresponds to the Converter's <U> type. -->
+                                    <userType>org.joda.time.DateTime</userType>
+
+                                    <!-- Associate that custom type with your converter. -->
+                                    <converter>com.artorias.util.JooqJodaDateTimeConverter</converter>
+
+                                    <!-- Add a Java regular expression matching fully-qualified columns. Use the pipe to separate several expressions.
+
+                                         If provided, both "expressions" and "types" must match. -->
+                                    <expression>TIMESTAMP</expression>
+
+                                    <!-- Add a Java regular expression matching data types to be forced to
+                                         have this type.
+
+                                         Data types may be reported by your database as:
+                                         - NUMBER              regexp suggestion: NUMBER
+                                         - NUMBER(5)           regexp suggestion: NUMBER\(5\)
+                                         - NUMBER(5, 2)        regexp suggestion: NUMBER\(5,\s*2\)
+                                         - any other form
+
+                                         It is thus recommended to use defensive regexes for types.
+
+                                         If provided, both "expressions" and "types" must match. -->
+                                    <types>.*</types>
+                                </forcedType>
+                            </forcedTypes>
                         </database>
                         <target>
                             <packageName>com.artorias.database.jooq</packageName>

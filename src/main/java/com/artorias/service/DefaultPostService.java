@@ -3,6 +3,7 @@ package com.artorias.service;
 import com.artorias.database.jooq.tables.pojos.Post;
 import com.artorias.database.jooq.tables.records.PostRecord;
 import com.artorias.dto.PostDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
 import org.jvnet.hk2.annotations.Service;
 import org.modelmapper.ModelMapper;
@@ -17,8 +18,10 @@ import static com.artorias.database.jooq.tables.Post.POST;
 /**
  * Created by devin on 11/13/16.
  */
+
+@Slf4j
 @Service
-public class DefaultPostService extends BaseService<PostRecord, com.artorias.database.jooq.tables.Post, com.artorias.database.jooq.tables.pojos.Post, PostDTO> {
+public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias.database.jooq.tables.Post, Post, PostDTO> {
 
     @Autowired
     private ModelMapper mapper;
@@ -35,8 +38,8 @@ public class DefaultPostService extends BaseService<PostRecord, com.artorias.dat
     public Post find(String slug) {
         return this.dsl.select()
                 .from(POST)
-                .join(AUTHOR)
-                .on(POST.AUTHOR_ID.equal(AUTHOR.AUTHOR_ID))
+                //.join(AUTHOR)
+                //.on(POST.AUTHOR_ID.equal(AUTHOR.AUTHOR_ID))
                 .where(POST.SLUG.equal(slug))
                 .fetchAny()
                 .into(Post.class);
@@ -59,7 +62,8 @@ public class DefaultPostService extends BaseService<PostRecord, com.artorias.dat
 
     @Override
     public List<PostDTO> asDto(List<Post> results) {
-        java.lang.reflect.Type targetListType = new TypeToken<List<PostDTO>>() {}.getType();
+        java.lang.reflect.Type targetListType = new TypeToken<List<PostDTO>>() {
+        }.getType();
         return mapper.map(results, targetListType);
     }
 
