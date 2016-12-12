@@ -10,3 +10,9 @@ cache:
   directories:
   - .autoconf
   - $HOME/.m2
+services:
+  - postgresql
+addons:
+  postgresql: "9.5"
+before_script:
+ - psql < scripts/create_artorias_database.sql
