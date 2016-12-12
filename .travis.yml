@@ -15,4 +15,4 @@ services:
 addons:
   postgresql: "9.5"
 before_script:
- - psql < scripts/create_artorias_database.sql
+ - psql -c "CREATE DATABASE artorias" -U postgres && psql < scripts/create_artorias_database.sql
