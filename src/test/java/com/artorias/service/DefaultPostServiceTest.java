@@ -77,8 +77,7 @@ public class DefaultPostServiceTest {
         postService.add(expectedPost);
     }
 
-    // no idea why this is failing and insert/update aren't.
-    @Test(enabled=false)
+    @Test
     public void delete() {
         Post p = findPost();
         postService.delete(p);
