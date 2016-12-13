@@ -6,10 +6,6 @@ script:
   - mvn test jacoco:report
 after_success:
   - mvn coveralls:report
-cache:
-  directories:
-  - .autoconf
-  - $HOME/.m2
 services:
   - postgresql
 addons:
