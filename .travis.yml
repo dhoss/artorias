@@ -14,5 +14,5 @@ services:
   - postgresql
 addons:
   postgresql: "9.5"
-before_script:
+before_install:
  - psql -c "CREATE DATABASE artorias; CREATE SCHEMA blog;" -U postgres && psql < scripts/create_artorias_database.sql
