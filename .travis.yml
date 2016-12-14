@@ -13,4 +13,6 @@ addons:
 before_install:
  - sudo service postgresql restart
  - psql -c "CREATE DATABASE artorias" -U postgres && psql artorias < scripts/create_artorias_database.sql
+
+before_script:
  - psql -c "SELECT * FROM blog.post" -U postgres artorias
