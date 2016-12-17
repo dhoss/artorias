@@ -65,6 +65,4 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
         return p.getPostId();
     }
 
-
-
 }

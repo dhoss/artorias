@@ -48,8 +48,7 @@ public abstract class BaseServiceTest<E, P> {
         provider = new TestDataProvider();
         connection = new MockConnection(provider);
         create = DSL.using(connection, SQLDialect.POSTGRES_9_5);
-        service = setupService();//Class<E>;//(Class<E>) ((ParameterizedType) getClass()
-                //.getGenericSuperclass()).getActualTypeArguments()[0];
+        service = setupService();
         expectedRecord = expectedRecord();
         searchTerm = searchTerm();
 

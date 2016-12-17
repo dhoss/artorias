@@ -12,9 +12,7 @@ import org.jooq.tools.jdbc.MockExecuteContext;
 import org.jooq.tools.jdbc.MockResult;
 
 import java.sql.SQLException;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Calendar;
 
 import static com.artorias.database.jooq.tables.Author.AUTHOR;
 import static com.artorias.database.jooq.tables.Post.POST;
