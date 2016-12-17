@@ -48,7 +48,6 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
     @Override
     public PostRecord buildRecord(Post post) {
         ModelMapper mapper = new ModelMapper();
-        System.out.println("**********POST OBJECT IN BUILDRECORD " + post);
         PostRecord p = dsl.fetchOne(POST, POST.POST_ID.equal(post.getPostId()));
         if (p == null) {
             p = mapper.map(post, PostRecord.class);
