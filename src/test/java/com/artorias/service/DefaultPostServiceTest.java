@@ -20,7 +20,9 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
 
     @Override
     protected Post expectedRecord() {
-        return expectedPost;
+        Timestamp t = new Timestamp(1481136454);
+        Post p = new Post(1, "Test Post", "test-post", "This is a test post", 1, t, t, t);
+        return p;
     }
 
     @Override
