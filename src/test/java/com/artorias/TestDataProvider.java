@@ -30,6 +30,7 @@ public class TestDataProvider implements MockDataProvider {
         // You might need a DSLContext to create org.jooq.Result and org.jooq.Record objects
         DSLContext create = DSL.using(SQLDialect.POSTGRES_9_5);
         MockResult[] mock = new MockResult[1];
+        String selectNoJoinRgx = "SELECT (\"\\w+\"\\.\"\\w+\"\\.\"\\w+\",?\\s)+FROM \"\\w+\"\\.\"\\w+\" WHERE \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" =.+";
 
         // The execute context contains SQL string(s), bind values, and other meta-data
         String sql = ctx.sql();
@@ -40,7 +41,8 @@ public class TestDataProvider implements MockDataProvider {
         }
 
         // You decide, whether any given statement returns results, and how many
-        else if (sql.toUpperCase().contains("SELECT")) {
+        else if (sql.toUpperCase().matches(selectNoJoinRgx)) {
+            log.debug("***********************SQL STRING MATCHES");
 
             // I want to pull this from a common source, this is very ugly
             Result<PostRecord> result = create.newResult(POST);

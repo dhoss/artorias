@@ -38,11 +38,19 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
     public Post find(String slug) {
         return this.dsl.select()
                 .from(POST)
-                //.join(AUTHOR)
-                //.on(POST.AUTHOR_ID.equal(AUTHOR.AUTHOR_ID))
                 .where(POST.SLUG.equal(slug))
                 .fetchAny()
                 .into(Post.class);
+    }
+
+    public PostDTO findWithRelated(String slug) {
+        return this.dsl.select()
+                .from(POST)
+                .join(AUTHOR)
+                .on(POST.AUTHOR_ID.equal(AUTHOR.AUTHOR_ID))
+                .where(POST.SLUG.equal(slug))
+                .fetchAny()
+                .into(PostDTO.class);
     }
 
     @Override

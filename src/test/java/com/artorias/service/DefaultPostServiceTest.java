@@ -1,7 +1,11 @@
 package com.artorias.service;
 
+import com.artorias.database.jooq.tables.pojos.Author;
 import com.artorias.database.jooq.tables.pojos.Post;
+import com.artorias.dto.PostDTO;
+import org.junit.Test;
 import org.mockito.Mock;
+import org.testng.Assert;
 
 import java.sql.Timestamp;
 
@@ -10,9 +14,7 @@ import java.sql.Timestamp;
  */
 public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, Post>{
 
-    @Mock
-    Post expectedPost;
-
+    //// base methods /////
     @Override
     protected DefaultPostService setupService() {
         return new DefaultPostService(this.create, this.mockModelMapper);
@@ -20,7 +22,7 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
 
     @Override
     protected Post expectedRecord() {
-        Timestamp t = new Timestamp(1481136454);
+        Timestamp t = ts();
         Post p = new Post(1, "Test Post", "test-post", "This is a test post", 1, t, t, t);
         return p;
     }
@@ -61,8 +63,41 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
         return getPostId(p);
     }
 
+    //// end base methods /////
+
+   /* @Test
+    public void findWithRelated() {
+        PostDTO expected = dto();
+        Assert.assertEquals(expected, service.findWithRelated(searchTerm()));
+    }*/
+
+
+    //// utility methods /////
     private int getPostId(Post p) {
         return p.getPostId();
     }
+
+    private Author expectedAuthor() {
+        Timestamp t = ts();
+        return new Author(1, "test author", "test@test.com", "1234", t, t, true, false);
+    }
+
+    private Timestamp ts() {
+        return new Timestamp(1481136454);
+    }
+
+    private PostDTO dto() {
+        PostDTO expected = new PostDTO();
+        expected.setPostId(1);
+        expected.setTitle("test post");
+        expected.setSlug("test-post");
+        expected.setBody("test post body");
+        expected.setAuthor(expectedAuthor());
+        expected.setCreatedOn(ts());
+        expected.setUpdatedOn(ts());
+        expected.setPublishedOn(ts());
+        return expected;
+    }
+    //// end utility methods /////
 
 }
