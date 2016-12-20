@@ -23,7 +23,7 @@ import javax.annotation.Generated;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class SchemaVersion implements Serializable {
 
-    private static final long serialVersionUID = 15778577;
+    private static final long serialVersionUID = -103956609;
 
     private Integer   installedRank;
     private String    version;
@@ -163,6 +163,95 @@ public class SchemaVersion implements Serializable {
     public SchemaVersion setSuccess(Boolean success) {
         this.success = success;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        final SchemaVersion other = (SchemaVersion) obj;
+        if (installedRank == null) {
+            if (other.installedRank != null)
+                return false;
+        }
+        else if (!installedRank.equals(other.installedRank))
+            return false;
+        if (version == null) {
+            if (other.version != null)
+                return false;
+        }
+        else if (!version.equals(other.version))
+            return false;
+        if (description == null) {
+            if (other.description != null)
+                return false;
+        }
+        else if (!description.equals(other.description))
+            return false;
+        if (type == null) {
+            if (other.type != null)
+                return false;
+        }
+        else if (!type.equals(other.type))
+            return false;
+        if (script == null) {
+            if (other.script != null)
+                return false;
+        }
+        else if (!script.equals(other.script))
+            return false;
+        if (checksum == null) {
+            if (other.checksum != null)
+                return false;
+        }
+        else if (!checksum.equals(other.checksum))
+            return false;
+        if (installedBy == null) {
+            if (other.installedBy != null)
+                return false;
+        }
+        else if (!installedBy.equals(other.installedBy))
+            return false;
+        if (installedOn == null) {
+            if (other.installedOn != null)
+                return false;
+        }
+        else if (!installedOn.equals(other.installedOn))
+            return false;
+        if (executionTime == null) {
+            if (other.executionTime != null)
+                return false;
+        }
+        else if (!executionTime.equals(other.executionTime))
+            return false;
+        if (success == null) {
+            if (other.success != null)
+                return false;
+        }
+        else if (!success.equals(other.success))
+            return false;
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((installedRank == null) ? 0 : installedRank.hashCode());
+        result = prime * result + ((version == null) ? 0 : version.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((script == null) ? 0 : script.hashCode());
+        result = prime * result + ((checksum == null) ? 0 : checksum.hashCode());
+        result = prime * result + ((installedBy == null) ? 0 : installedBy.hashCode());
+        result = prime * result + ((installedOn == null) ? 0 : installedOn.hashCode());
+        result = prime * result + ((executionTime == null) ? 0 : executionTime.hashCode());
+        result = prime * result + ((success == null) ? 0 : success.hashCode());
+        return result;
     }
 
     @Override

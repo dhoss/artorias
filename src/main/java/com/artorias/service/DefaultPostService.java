@@ -5,6 +5,8 @@ import com.artorias.database.jooq.tables.records.PostRecord;
 import com.artorias.dto.PostDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.DSLContext;
+import org.jooq.Record;
+import org.jooq.Result;
 import org.jvnet.hk2.annotations.Service;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -43,14 +45,13 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
                 .into(Post.class);
     }
 
-    public PostDTO findWithRelated(String slug) {
-        return this.dsl.select()
+    public Record findWithRelated(String slug) {
+        return this.dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, AUTHOR.NAME)
                 .from(POST)
                 .join(AUTHOR)
                 .on(POST.AUTHOR_ID.equal(AUTHOR.AUTHOR_ID))
                 .where(POST.SLUG.equal(slug))
-                .fetchAny()
-                .into(PostDTO.class);
+                .fetchAny();
     }
 
     @Override
@@ -69,13 +70,20 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
     }
 
     @Override
-    public List<PostDTO> asDto(List<Post> results) {
+    public List<PostDTO> listAsDto(List<Post> results) {
         java.lang.reflect.Type targetListType = new TypeToken<List<PostDTO>>() {
         }.getType();
         return mapper.map(results, targetListType);
     }
 
-    public List<PostDTO> listAsDto(int pageNumber) {
-        return asDto(list(pageNumber));
+    @Override
+    public PostDTO singleAsDto(Post result) {
+        java.lang.reflect.Type targetListType = new TypeToken<PostDTO>() {
+        }.getType();
+        return mapper.map(result, targetListType);
+    }
+
+    public List<PostDTO> pagedListAsDto(int pageNumber) {
+        return listAsDto(list(pageNumber));
     }
 }

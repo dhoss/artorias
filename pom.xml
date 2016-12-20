@@ -284,6 +284,7 @@
                             <fluentSetters>true</fluentSetters>
                             <records>true</records>
                             <pojos>true</pojos>
+                            <pojosEqualsAndHashCode>true</pojosEqualsAndHashCode>
                         </generate>
                     </generator>
                 </configuration>

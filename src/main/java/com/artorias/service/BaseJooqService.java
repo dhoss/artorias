@@ -102,7 +102,9 @@ public abstract class BaseJooqService<R extends Record, T extends Table<R>, E, D
 
     public abstract E find(String n);
 
-    public abstract List<DT> asDto(List<E> p);
+    public abstract DT singleAsDto(E p);
+
+    public abstract List<DT> listAsDto(List<E> p);
 
     private void setDefaults() {
         this.recordClass = (Class<E>) ((ParameterizedType) getClass()
