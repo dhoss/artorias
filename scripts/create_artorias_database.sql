@@ -1,20 +1,20 @@
-CREATE USER artorias PASSWORD 'artorias' LOGIN;
+CREATE USER artorias_dev PASSWORD 'artorias_dev' LOGIN;
 
-ALTER USER artorias CREATEDB;
+ALTER USER artorias_dev CREATEDB;
 
---CREATE DATABASE artorias;
+--CREATE DATABASE artorias_dev;
 
 CREATE SCHEMA blog;
 
-REVOKE CONNECT ON DATABASE artorias FROM PUBLIC;
+REVOKE CONNECT ON DATABASE artorias_dev FROM PUBLIC;
 
-ALTER SCHEMA blog OWNER TO artorias;
+ALTER SCHEMA blog OWNER TO artorias_dev;
 
 GRANT CONNECT
-ON DATABASE artorias
-TO artorias;
+ON DATABASE artorias_dev
+TO artorias_dev;
 
 ALTER DEFAULT PRIVILEGES
-    FOR ROLE artorias   -- Alternatively "FOR USER"
+    FOR ROLE artorias_dev   -- Alternatively "FOR USER"
     IN SCHEMA blog
-    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO artorias;
+    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO artorias_dev;

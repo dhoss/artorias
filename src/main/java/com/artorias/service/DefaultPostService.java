@@ -69,6 +69,7 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
         return POST;
     }
 
+    // could probably generalize these in the base class
     @Override
     public List<PostDTO> listAsDto(List<Post> results) {
         java.lang.reflect.Type targetListType = new TypeToken<List<PostDTO>>() {
