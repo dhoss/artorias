@@ -28,7 +28,7 @@ public class TestDataProvider implements MockDataProvider {
         DSLContext create = DSL.using(SQLDialect.POSTGRES_9_5);
         MockResult[] mock = new MockResult[1];
         String selectPostNoJoinRgx = "SELECT (\"\\w+\"\\.\"\\w+\"\\.\"\\w+\",?\\s)+FROM \"\\w+\"\\.\"\\w+\" WHERE \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" =.+";
-        String selectPostJoinAuthorRgx = "SELECT (\"\\w+\"\\.\"\\w+\"\\.\"\\w+\",?\\s)+FROM \"\\w+\"\\.\"\\w+\" JOIN \"\\w+\"\\.\"\\w+\" ON \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" = \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" WHERE \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" =.+";
+        String selectPostJoinAuthorRgx = "SELECT (\"\\w+\"\\.\"\\w+\"\\.\"\\w+\",?\\s)+FROM \"\\w+\"\\.\"\\w+\"(, \"\\w+\"\\.\"\\w+\")? JOIN \"\\w+\"\\.\"\\w+\" ON \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" = \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" WHERE \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" =.+";
 
         // The execute context contains SQL string(s), bind values, and other meta-data
         String sql = ctx.sql();
@@ -76,30 +76,28 @@ public class TestDataProvider implements MockDataProvider {
 
     private Result<Record> buildSinglePostWithAuthorResult(DSLContext create) {
         Timestamp ts = new Timestamp(1481136454);
-        Field postId = DSL.field("POST_ID");
-        Field postTitle = DSL.field("TITLE");
-        Field postSlug = DSL.field("SLUG");
-        Field postBody = DSL.field("BODY");
-        Field postAuthor = DSL.field("AUTHOR_ID");
-        //Field postCreatedOn = DSL.field("CREATED_ON");
-        //Field postUpdatedOn = DSL.field("UPDATED_ON");
-        Field postPublishedOn = DSL.field("PUBLISHED_ON");
-        //Field authorId = DSL.field("AUTHOR_ID");
-        Field authorName = DSL.field("NAME");
+        Field postId = DSL.field(POST.POST_ID);
+        Field postTitle = DSL.field(POST.TITLE);
+        Field postSlug = DSL.field(POST.SLUG);
+        Field postBody = DSL.field(POST.BODY);
+        Field postAuthor = DSL.field(POST.AUTHOR_ID);
+        Field postCreatedOn = DSL.field(POST.CREATED_ON);
+        Field postUpdatedOn = DSL.field(POST.UPDATED_ON);
+        Field postPublishedOn = DSL.field(POST.PUBLISHED_ON);
+        Field authorName = DSL.field(AUTHOR.NAME);
 
-
-        Result<Record> result = create.newResult(postId, postTitle, postSlug, postBody, postAuthor, postPublishedOn, authorName);
-        result.add(create.newRecord(POST));
-        result.add(create.newRecord(AUTHOR));
+        Result<Record> result = create.newResult(postId, postTitle, postSlug, postBody, postAuthor, postCreatedOn, postUpdatedOn, postPublishedOn, authorName);
+        result.add(create.newRecord(postId, postTitle, postSlug, postBody, postAuthor, postCreatedOn, postUpdatedOn, postPublishedOn, authorName));
+        //result.add(create.newRecord(AUTHOR));
         result.get(0).setValue(POST.POST_ID, 1);
         result.get(0).setValue(POST.TITLE, "Test Post");
         result.get(0).setValue(POST.SLUG, "test-post");
         result.get(0).setValue(POST.BODY, "This is a test post");
         result.get(0).setValue(POST.AUTHOR_ID, 1);
-        //result.get(0).setValue(POST.CREATED_ON, ts);
-        //result.get(0).setValue(POST.UPDATED_ON, ts);
+        result.get(0).setValue(POST.CREATED_ON, ts);
+        result.get(0).setValue(POST.UPDATED_ON, ts);
         result.get(0).setValue(POST.PUBLISHED_ON, ts);
-        result.get(1).setValue(AUTHOR.NAME, "Test Author");
+        result.get(0).setValue(AUTHOR.NAME, "Test Author");
 
         return result;
     }

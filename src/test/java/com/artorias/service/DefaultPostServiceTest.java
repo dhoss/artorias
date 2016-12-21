@@ -67,7 +67,7 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
 
     //// end base methods /////
 
-    @Test
+    @Test//(enabled=false)
     public void findWithRelated() {
         //PostDTO expected = dto();
         //Assert.assertEquals(
