@@ -1,11 +1,11 @@
 language: java
 jdk:
  - oraclejdk8
-install: mvn -Dartorias.env=test flyway:migrate install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+install: mvn flyway:migrate install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -Dartorias.env=test -Dspring.profiles.active=test
 script:
-  - mvn -Dartorias.env=test test jacoco:report
+  - mvn test jacoco:report -Dartorias.env=test -Dspring.profiles.active=test
 after_success:
-  - mvn -Dartorias.env=test coveralls:report
+  - mvn coveralls:report -Dartorias.env=test -Dspring.profiles.active=test
 services:
   - postgresql
 addons:
