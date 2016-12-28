@@ -24,9 +24,9 @@
         <java.version>1.8</java.version>
         <reactor.version>3.0.3.BUILD-SNAPSHOT</reactor.version>
         <artorias.env>dev</artorias.env>
-        <spring.datasource.schema>blog</spring.datasource.schema>
+        <db.schema>blog</db.schema>
         <spring.datasource.url>
-            jdbc:postgresql://localhost:5432/artorias_${artorias.env}?currentSchema=${spring.datasource.schema}
+            jdbc:postgresql://localhost:5432/artorias_${artorias.env}?currentSchema=${db.schema}
         </spring.datasource.url>
         <spring.datasource.user>artorias_${artorias.env}</spring.datasource.user>
         <spring.datasource.password>artorias_${artorias.env}</spring.datasource.password>
@@ -187,6 +187,11 @@
             <artifactId>testng</artifactId>
             <version>6.10</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -250,7 +255,7 @@
                             <name>org.jooq.util.postgres.PostgresDatabase</name>
                             <includes>.*</includes>
                             <excludes></excludes>
-                            <inputSchema>${spring.datasource.schema}</inputSchema>
+                            <inputSchema>${db.schema}</inputSchema>
                             <!-- Then, associate custom types with database columns -->
                             <forcedTypes>
                                 <forcedType>
@@ -300,11 +305,11 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>4.0.3</version>
                 <configuration>
-                    <user>${spring.datasource.user}</user>
-                    <password>${spring.datasource.password}</password>
-                    <url>${spring.datasource.url}</url>
+                    <user>${flyway.user}</user>
+                    <password>${flyway.password}</password>
+                    <url>${flyway.url}</url>
                     <schemas>
-                        <schema>${spring.datasource.schema}</schema>
+                        <schema>${flyway.schemas}</schema>
                     </schemas>
                 </configuration>
             </plugin>
