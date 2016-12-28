@@ -1,7 +1,7 @@
 language: java
 jdk:
  - oraclejdk8
-install: mvn flyway:migrate install -DskipTests=true -Dmaven.javadoc.skip=true -B -V -Dartorias.env=test -Dspring.profiles.active=test
+install: mvn flyway:migrate install -Dflyway.user=artorias_test -Dflyway.password=artorias_test -Dflyway.url=jdbc:postgresql://localhost:5432/artorias_test?currentSchema=blog -Dflyway.schema=blog -DskipTests=true -Dmaven.javadoc.skip=true -B -V -Dartorias.env=test -Dspring.profiles.active=test
 script:
   - mvn test jacoco:report -Dartorias.env=test -Dspring.profiles.active=test
 after_success:
