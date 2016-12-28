@@ -9,6 +9,7 @@ import org.jooq.tools.jdbc.MockConnection;
 import org.jooq.tools.jdbc.MockDataProvider;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
+import org.springframework.test.context.TestPropertySource;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -23,6 +24,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
  * Created by devin on 11/14/16.
  */
 @Slf4j
+@TestPropertySource(locations="classpath:application-test.properties")
 @Test
 public abstract class BaseServiceTest<E, P> {
 

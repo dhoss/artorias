@@ -85,7 +85,6 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
     }
 
     public List<PostDTO> pagedListAsDto(int pageNumber) {
-        log.debug("******* HIT PAGEDLISTASDTO");
         return listAsDto(list(pageNumber));
     }
 }
