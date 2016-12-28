@@ -24,12 +24,10 @@
         <java.version>1.8</java.version>
         <reactor.version>3.0.3.BUILD-SNAPSHOT</reactor.version>
         <artorias.env>dev</artorias.env>
-        <artorias.db.schema>blog</artorias.db.schema>
-        <artorias.db.url>jdbc:postgresql://localhost:5432/artorias_${artorias.env}?currentSchema=${artorias.db.schema}</artorias.db.url>
-        <artorias.db.user>artorias_${artorias.env}</artorias.db.user>
-        <artorias.db.password>artorias_${artorias.env}</artorias.db.password>
-        <artorias.db.bootstrap-user>artorias_${artorias.env}</artorias.db.bootstrap-user>
-        <artorias.db.bootstrap-password>artorias_${artorias.env}</artorias.db.bootstrap-password>
+        <spring.datasource.schema>blog</spring.datasource.schema>
+        <spring.datasource.url>jdbc:postgresql://localhost:5432/artorias_${artorias.env}?currentSchema=${spring.datasource.schema}</spring.datasource.url>
+        <spring.datasource.user>artorias_${artorias.env}</spring.datasource.user>
+        <spring.datasource.password>artorias_${artorias.env}</spring.datasource.password>
     </properties>
 
     <dependencies>
@@ -234,9 +232,9 @@
                     <!-- JDBC connection parameters -->
                     <jdbc>
                         <driver>org.postgresql.Driver</driver>
-                        <url>${artorias.db.url}</url>
-                        <user>${artorias.db.user}</user>
-                        <password>${artorias.db.password}</password>
+                        <url>${spring.datasource.url}</url>
+                        <user>${spring.datasource.user}</user>
+                        <password>${spring.datasource.password}</password>
                     </jdbc>
 
                     <!-- Generator parameters -->
@@ -245,7 +243,7 @@
                             <name>org.jooq.util.postgres.PostgresDatabase</name>
                             <includes>.*</includes>
                             <excludes></excludes>
-                            <inputSchema>${artorias.db.schema}</inputSchema>
+                            <inputSchema>${spring.datasource.schema}</inputSchema>
                             <!-- Then, associate custom types with database columns -->
                             <forcedTypes>
                                 <forcedType>
@@ -295,11 +293,11 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>4.0.3</version>
                 <configuration>
-                    <user>${artorias.db.bootstrap-user}</user>
-                    <password>${artorias.db.bootstrap-password}</password>
-                    <url>${artorias.db.url}</url>
+                    <user>${spring.datasource.user}</user>
+                    <password>${spring.datasource.password}</password>
+                    <url>${spring.datasource.url}</url>
                     <schemas>
-                        <schema>${artorias.db.schema}</schema>
+                        <schema>${spring.datasource.schema}</schema>
                     </schemas>
                 </configuration>
             </plugin>

@@ -22,8 +22,6 @@ public class PostController {
     @Autowired
     private DSLContext dsl;
 
-
-
     @Autowired
     private DefaultPostService postService;
 
