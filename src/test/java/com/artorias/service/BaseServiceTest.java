@@ -24,7 +24,7 @@ import static org.mockito.MockitoAnnotations.initMocks;
  * Created by devin on 11/14/16.
  */
 @Slf4j
-@TestPropertySource(locations="classpath:application-test.properties")
+@TestPropertySource(locations="classpath:application.properties")
 @Test
 public abstract class BaseServiceTest<E, P> {
 

@@ -23,11 +23,15 @@ public class PostController {
     private DSLContext dsl;
 
     @Autowired
-    private DefaultPostService postService;
+    private final DefaultPostService service;
+
+    public PostController(DefaultPostService service) {
+        this.service = service;
+    }
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PostDTO> list(@RequestParam(name="page", defaultValue = "1") int page) {
-        return postService.pagedListAsDto(page);
+        return service.pagedListAsDto(page);
     }
 }

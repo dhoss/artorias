@@ -2,7 +2,7 @@ CREATE USER artorias_dev PASSWORD 'artorias_dev' LOGIN;
 
 ALTER USER artorias_dev CREATEDB;
 
---CREATE DATABASE artorias_dev;
+GRANT CREATE ON DATABASE artorias_dev TO artorias_dev;
 
 CREATE SCHEMA blog;
 
