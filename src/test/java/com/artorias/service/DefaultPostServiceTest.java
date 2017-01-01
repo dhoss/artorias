@@ -4,10 +4,8 @@ import com.artorias.database.jooq.tables.pojos.Author;
 import com.artorias.database.jooq.tables.pojos.Post;
 import com.artorias.dto.PostDTO;
 import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.mockito.Mock;
-import org.testng.Assert;
+import static com.artorias.database.jooq.tables.Post.POST;
 
 import java.sql.Timestamp;
 
@@ -67,7 +65,7 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
 
     //// end base methods /////
 
-    @Test//(enabled=false)
+    @Test
     public void findWithRelated() {
         PostDTO expected = dto();
         // actual, expected
@@ -77,6 +75,10 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
         );
     }
 
+    @Test
+    public void table() {
+        Assert.assertEquals(POST, service.table());
+    }
 
     //// utility methods /////
     private int getPostId(Post p) {
