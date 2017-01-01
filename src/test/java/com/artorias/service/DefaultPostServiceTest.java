@@ -69,11 +69,12 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
 
     @Test//(enabled=false)
     public void findWithRelated() {
-        //PostDTO expected = dto();
-        //Assert.assertEquals(
-         //       expected,
-                service.findWithRelated(searchTerm());
-        //);
+        PostDTO expected = dto();
+        // actual, expected
+        Assert.assertEquals(
+                service.findWithRelated(searchTerm()),
+                expected
+        );
     }
 
 
@@ -84,7 +85,7 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
 
     private Author expectedAuthor() {
         Timestamp t = ts();
-        return new Author(1, "test author", "test@test.com", "1234", t, t, true, false);
+        return new Author(1, "Test Author", null, null, t, t, null, null);
     }
 
     private Timestamp ts() {
@@ -94,9 +95,9 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
     private PostDTO dto() {
         PostDTO expected = new PostDTO();
         expected.setPostId(1);
-        expected.setTitle("test post");
+        expected.setTitle("Test Post");
         expected.setSlug("test-post");
-        expected.setBody("test post body");
+        expected.setBody("This is a test post");
         expected.setAuthor(expectedAuthor());
         expected.setCreatedOn(ts());
         expected.setUpdatedOn(ts());

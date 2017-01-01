@@ -28,7 +28,8 @@ public class TestDataProvider implements MockDataProvider {
         DSLContext create = DSL.using(SQLDialect.POSTGRES_9_5);
         MockResult[] mock = new MockResult[1];
         String selectPostNoJoinRgx = "SELECT (\"\\w+\"\\.\"\\w+\"\\.\"\\w+\",?\\s)+FROM \"\\w+\"\\.\"\\w+\" WHERE \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" =.+";
-        String selectPostJoinAuthorRgx = "SELECT (\"\\w+\"\\.\"\\w+\"\\.\"\\w+\",?\\s)+FROM \"\\w+\"\\.\"\\w+\"(, \"\\w+\"\\.\"\\w+\")? JOIN \"\\w+\"\\.\"\\w+\" ON \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" = \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" WHERE \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" =.+";
+        String selectPostJoinAuthorRgx = "SELECT \"P\".\"POST_ID\", \"P\".\"TITLE\", \"P\".\"SLUG\", \"P\".\"BODY\", \"P\".\"AUTHOR_ID\", \"P\".\"CREATED_ON\", \"P\".\"UPDATED_ON\", \"P\".\"PUBLISHED_ON\", \"A\".\"NAME\" FROM \"BLOG\".\"POST\" AS \"P\", \"BLOG\".\"AUTHOR\" AS \"A\" JOIN \"BLOG\".\"AUTHOR\" AS \"A\" ON \"P\".\"AUTHOR_ID\" = \"A\".\"AUTHOR_ID\" WHERE \"P\".\"SLUG\"";
+                //"SELECT (\"\\w+\"\\.\"\\w+\"\\.\"\\w+\",?\\s)+FROM \"\\w+\"\\.\"\\w+\"(, \"\\w+\"\\.\"\\w+\")? JOIN \"\\w+\"\\.\"\\w+\" ON \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" = \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" WHERE \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" =.+";
 
         // The execute context contains SQL string(s), bind values, and other meta-data
         String sql = ctx.sql();
@@ -44,7 +45,8 @@ public class TestDataProvider implements MockDataProvider {
             mock[0] = new MockResult(1, result);
         }
 
-        else if (sql.toUpperCase().matches(selectPostJoinAuthorRgx)) {
+        else if (sql.toUpperCase().contains(selectPostJoinAuthorRgx)) {//matches(selectPostJoinAuthorRgx)) {
+            System.out.println("******** BUILDING JOIN RESULT");
             Result<Record> result = buildSinglePostWithAuthorResult(create);
             mock[0] = new MockResult(1, result);
         }
@@ -75,6 +77,7 @@ public class TestDataProvider implements MockDataProvider {
     }
 
     private Result<Record> buildSinglePostWithAuthorResult(DSLContext create) {
+        System.out.println("***** BUILD SINGLE POST WITH AUTHOR");
         Timestamp ts = new Timestamp(1481136454);
         Field postId = DSL.field(POST.POST_ID);
         Field postTitle = DSL.field(POST.TITLE);
@@ -88,7 +91,6 @@ public class TestDataProvider implements MockDataProvider {
 
         Result<Record> result = create.newResult(postId, postTitle, postSlug, postBody, postAuthor, postCreatedOn, postUpdatedOn, postPublishedOn, authorName);
         result.add(create.newRecord(postId, postTitle, postSlug, postBody, postAuthor, postCreatedOn, postUpdatedOn, postPublishedOn, authorName));
-        //result.add(create.newRecord(AUTHOR));
         result.get(0).setValue(POST.POST_ID, 1);
         result.get(0).setValue(POST.TITLE, "Test Post");
         result.get(0).setValue(POST.SLUG, "test-post");
