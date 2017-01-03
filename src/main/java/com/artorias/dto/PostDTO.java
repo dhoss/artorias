@@ -17,7 +17,8 @@ public class PostDTO {
     private String title;
     private String slug;
     private String body;
-    private Author author;
+    private String authorName;
+    private int authorId;
     private Timestamp createdOn;
     private Timestamp updatedOn;
     private Timestamp publishedOn;

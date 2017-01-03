@@ -77,7 +77,6 @@ public class TestDataProvider implements MockDataProvider {
     }
 
     private Result<Record> buildSinglePostWithAuthorResult(DSLContext create) {
-        System.out.println("***** BUILD SINGLE POST WITH AUTHOR");
         Timestamp ts = new Timestamp(1481136454);
         Field postId = DSL.field(POST.POST_ID);
         Field postTitle = DSL.field(POST.TITLE);

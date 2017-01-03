@@ -3,11 +3,22 @@ package com.artorias.service;
 import com.artorias.database.jooq.tables.pojos.Author;
 import com.artorias.database.jooq.tables.pojos.Post;
 import com.artorias.dto.PostDTO;
+import com.google.common.collect.ImmutableMap;
+import org.jooq.DSLContext;
+import org.jooq.Field;
+import org.jooq.Record;
+import org.jooq.Result;
+import org.jooq.impl.DSL;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import static com.artorias.database.jooq.tables.Author.AUTHOR;
 import static com.artorias.database.jooq.tables.Post.POST;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by devin on 12/16/16.
@@ -77,8 +88,16 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
 
     @Test
     public void table() {
-        Assert.assertEquals(POST, service.table());
+        Assert.assertEquals(service.table(), POST);
     }
+
+   /* @Test
+    public void listAsDto() {
+        List<Map<String, Object>> postsMap = buildPostMap();
+        PostDTO dto = dto();
+
+        Assert.assertEquals(service.listAsDto(Arrays.asList(buildSinglePostWithAuthorResult(this.create))), dto);
+    }*/
 
     //// utility methods /////
     private int getPostId(Post p) {
@@ -100,12 +119,45 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
         expected.setTitle("Test Post");
         expected.setSlug("test-post");
         expected.setBody("This is a test post");
-        expected.setAuthor(expectedAuthor());
+        expected.setAuthorId(1);
+        expected.setAuthorName(expectedAuthor().getName());
         expected.setCreatedOn(ts());
         expected.setUpdatedOn(ts());
         expected.setPublishedOn(ts());
         return expected;
     }
-    //// end utility methods /////
 
+    private Result<Record> buildSinglePostWithAuthorResult(DSLContext create) {
+        Timestamp ts = new Timestamp(1481136454);
+        Field postId = DSL.field(POST.POST_ID);
+        Field postTitle = DSL.field(POST.TITLE);
+        Field postSlug = DSL.field(POST.SLUG);
+        Field postBody = DSL.field(POST.BODY);
+        Field postAuthor = DSL.field(POST.AUTHOR_ID);
+        Field postCreatedOn = DSL.field(POST.CREATED_ON);
+        Field postUpdatedOn = DSL.field(POST.UPDATED_ON);
+        Field postPublishedOn = DSL.field(POST.PUBLISHED_ON);
+        Field authorName = DSL.field(AUTHOR.NAME);
+
+        Result<Record> result = create.newResult(postId, postTitle, postSlug, postBody, postAuthor, postCreatedOn, postUpdatedOn, postPublishedOn, authorName);
+        result.add(create.newRecord(postId, postTitle, postSlug, postBody, postAuthor, postCreatedOn, postUpdatedOn, postPublishedOn, authorName));
+        result.get(0).setValue(POST.POST_ID, 1);
+        result.get(0).setValue(POST.TITLE, "Test Post");
+        result.get(0).setValue(POST.SLUG, "test-post");
+        result.get(0).setValue(POST.BODY, "This is a test post");
+        result.get(0).setValue(POST.AUTHOR_ID, 1);
+        result.get(0).setValue(POST.CREATED_ON, ts);
+        result.get(0).setValue(POST.UPDATED_ON, ts);
+        result.get(0).setValue(POST.PUBLISHED_ON, ts);
+        result.get(0).setValue(AUTHOR.NAME, "Test Author");
+
+        return result;
+    }
+
+    /*private List<Map<String, Object>> buildPostMap() {
+        Map<String, Object> m = ImmutableMap.of("")
+    }*/
+
+
+    //// end utility methods /////
 }

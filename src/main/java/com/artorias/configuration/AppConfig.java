@@ -1,5 +1,8 @@
 package com.artorias.configuration;
 
+import com.artorias.database.jooq.tables.pojos.Author;
+import com.artorias.database.jooq.tables.pojos.Post;
+import com.artorias.dto.PostDTO;
 import com.artorias.exception.ExceptionTranslator;
 import com.artorias.service.DefaultPostService;
 import com.zaxxer.hikari.HikariConfig;
@@ -7,7 +10,12 @@ import com.zaxxer.hikari.HikariDataSource;
 import org.jooq.*;
 import org.jooq.conf.Settings;
 import org.jooq.impl.*;
+import org.modelmapper.Conditions;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.convention.NameTokenizers;
+import org.modelmapper.jooq.RecordValueReader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +25,7 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 import javax.sql.DataSource;
+import java.util.Map;
 
 /**
  * Created by devin on 11/13/16.
@@ -24,45 +33,8 @@ import javax.sql.DataSource;
 @Configuration
 public class AppConfig {
 
-   /* @Bean
-    public HikariDataSource hikariDataSource() {
-
-        HikariConfig config = new HikariConfig();
-
-        config.addDataSourceProperty("url", env.getProperty("spring.datasource.url"));
-        config.addDataSourceProperty("username", env.getProperty("spring.datasource.username"));
-        config.addDataSourceProperty("password", env.getProperty("spring.datasource.password"));
-
-        return new HikariDataSource(config);
-    }*/
-
-    /*
-    @Qualifier("jooqConfig")
-    public org.jooq.Configuration jooqConfig() {
-        initDataSource();
-
-        // Configuration for JOOQ
-        return new DefaultConfiguration()
-                .set(SQLDialect.POSTGRES_9_5)
-                .set(new DataSourceConnectionProvider(dataSource))
-                .set(new Settings().withExecuteLogging(true));
-    }*/
-
     @Autowired
     private Environment env;
-/*
-    @Bean
-    public DSLContext dsl() {
-        initDataSource();
-
-        DefaultConfiguration config = new DefaultConfiguration();
-        config.set(SQLDialect.POSTGRES_9_5)
-              .set(new DataSourceConnectionProvider(dataSource))
-              .set(new Settings().withExecuteLogging(true));
-
-        return DSL.using(config);
-    }
-*/
 
     @Bean
     public DSLContext dsl(org.jooq.Configuration config) {
@@ -107,7 +79,12 @@ public class AppConfig {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        ModelMapper mapper = new ModelMapper();
+
+        mapper.getConfiguration().addValueReader(new RecordValueReader());
+        mapper.getConfiguration().setSourceNameTokenizer(NameTokenizers.UNDERSCORE);
+
+        return mapper;
     }
 
     @Bean

@@ -95,7 +95,7 @@ public class PostControllerTest {
         expected.setTitle("test post");
         expected.setSlug("test-post");
         expected.setBody("test post body");
-        expected.setAuthor(expectedAuthor());
+        expected.setAuthorName(expectedAuthor().getName());
         expected.setCreatedOn(ts());
         expected.setUpdatedOn(ts());
         expected.setPublishedOn(ts());

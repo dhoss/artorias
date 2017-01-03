@@ -5,8 +5,10 @@ import com.artorias.database.jooq.tables.Post;
 import com.artorias.database.jooq.tables.records.AuthorRecord;
 import com.artorias.database.jooq.tables.records.PostRecord;
 import com.artorias.dto.PostDTO;
+import com.artorias.util.Pagination;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.*;
+import org.jooq.impl.DSL;
 import org.jvnet.hk2.annotations.Service;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Map;
 
 import static com.artorias.database.jooq.tables.Author.AUTHOR;
 import static com.artorias.database.jooq.tables.Post.POST;
@@ -46,6 +49,19 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
                 .into(com.artorias.database.jooq.tables.pojos.Post.class);
     }
 
+    // fix this to allow for more flexible queries instead of overriding the whole thing
+    @Override
+    public List<Map<String, Object>> list(int pageNumber) {
+        Pagination pager = new Pagination(count());
+        return dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, POST.UPDATED_ON, POST.PUBLISHED_ON, AUTHOR.NAME.as("AUTHOR_NAME"))
+                .from(POST, AUTHOR)
+                .orderBy(POST.UPDATED_ON.desc(), POST.CREATED_ON.desc())
+                .limit(pageSize)
+                .offset(pager.offsetFromPage(pageNumber))
+                .fetch()
+                .intoMaps();
+    }
+
     public PostDTO findWithRelated(String slug) {
         Author a = AUTHOR.as("a");
         Post p = POST.as("p");
@@ -62,7 +78,6 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
 
     @Override
     public PostRecord buildRecord(com.artorias.database.jooq.tables.pojos.Post post) {
-        ModelMapper mapper = new ModelMapper();
         PostRecord p = dsl.fetchOne(POST, POST.POST_ID.equal(post.getPostId()));
         if (p == null) {
             p = mapper.map(post, PostRecord.class);
@@ -77,10 +92,11 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
 
     // could probably generalize these in the base class
     @Override
-    public List<PostDTO> listAsDto(List<com.artorias.database.jooq.tables.pojos.Post> results) {
+    public List<PostDTO> listAsDto(List<Map<String,Object>> results) {
         java.lang.reflect.Type targetListType = new TypeToken<List<PostDTO>>() {
         }.getType();
-        return mapper.map(results, targetListType);
+        List<PostDTO> dto =  mapper.map(results, targetListType);
+        return dto;
     }
 
     @Override
@@ -97,7 +113,8 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
         dto.setTitle(p.getValue(POST.TITLE));
         dto.setSlug(p.getValue(POST.SLUG));
         dto.setBody(p.getValue(POST.BODY));
-        dto.setAuthor(buildAuthor(a));
+        dto.setAuthorName(a.getValue(AUTHOR.NAME));
+        dto.setAuthorId(p.getValue(POST.AUTHOR_ID));
         dto.setCreatedOn(p.getValue(POST.CREATED_ON));
         dto.setUpdatedOn(p.getValue(POST.UPDATED_ON));
         dto.setPublishedOn(p.getValue(POST.PUBLISHED_ON));
@@ -118,6 +135,7 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
     }
 
     public List<PostDTO> pagedListAsDto(int pageNumber) {
+        System.out.println("****** RESULTS AS MAP " + list(pageNumber));
         return listAsDto(list(pageNumber));
     }
 }

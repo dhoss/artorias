@@ -2,10 +2,7 @@ package com.artorias.service;
 
 import com.artorias.util.Pagination;
 import lombok.extern.slf4j.Slf4j;
-import org.jooq.Record;
-import org.jooq.Table;
-import org.jooq.DSLContext;
-import org.jooq.UpdatableRecord;
+import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -14,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by devin on 11/13/16.
@@ -63,7 +61,7 @@ public abstract class BaseJooqService<R extends Record, T extends Table<R>, E, D
     ///////////////////
 
     // READ ///////////
-    public List<E> list(int pageNumber) {
+    public List<Map<String, Object>> list(int pageNumber) {
         Pagination pager = new Pagination(count());
         return dsl.select()
                 .from(table())
@@ -71,7 +69,7 @@ public abstract class BaseJooqService<R extends Record, T extends Table<R>, E, D
                 .limit(pageSize)
                 .offset(pager.offsetFromPage(pageNumber))
                 .fetch()
-                .into(this.recordClass);
+                .intoMaps();
     }
     ////////////////////
 
@@ -104,7 +102,7 @@ public abstract class BaseJooqService<R extends Record, T extends Table<R>, E, D
 
     public abstract DT singleAsDto(E p);
 
-    public abstract List<DT> listAsDto(List<E> p);
+    public abstract List<DT> listAsDto(List<Map<String,Object>> p);
 
     private void setDefaults() {
         this.recordClass = (Class<E>) ((ParameterizedType) getClass()
