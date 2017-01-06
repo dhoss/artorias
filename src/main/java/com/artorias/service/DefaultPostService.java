@@ -54,16 +54,7 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
     // fix this to allow for more flexible queries instead of overriding the whole thing
     @Override
     public List<Map<String, Object>> list(int pageNumber) {
-        System.out.println("**** GOT TO LIST");
         Pagination pager = new Pagination(count());
-        System.out.println("***** PAGINATION");
-        String sql = dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, POST.UPDATED_ON, POST.PUBLISHED_ON, AUTHOR.NAME.as("AUTHOR_NAME"))
-                .from(POST, AUTHOR)
-                .orderBy(POST.UPDATED_ON.desc(), POST.CREATED_ON.desc())
-                .limit(pageSize)
-                .offset(pager.offsetFromPage(pageNumber))
-                .getSQL();
-        System.out.println("***** LIST SQL " + sql);
         Timestamp ts = new Timestamp(1481136454);
 
         List<Map<String, Object>> res = dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, POST.UPDATED_ON, POST.PUBLISHED_ON, AUTHOR.NAME.as("AUTHOR_NAME"))
@@ -73,7 +64,6 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
                 .offset(pager.offsetFromPage(pageNumber))
                 .fetch()
                 .intoMaps();
-        System.out.println("*****MAP IN LIST " + res);
         return res;
     }
 
@@ -108,11 +98,9 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
     // could probably generalize these in the base class
     @Override
     public List<PostDTO> listAsDto(List<Map<String,Object>> results) {
-        System.out.println("**** MAP FROM ASDTO " + results);
         java.lang.reflect.Type targetListType = new TypeToken<List<PostDTO>>() {
         }.getType();
         List<PostDTO> dto =  mapper.map(results, targetListType);
-        System.out.println("***** DTO RESULT " + dto);
         return dto;
     }
 
@@ -155,12 +143,12 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
         return listAsDto(list(pageNumber));
     }
 
+    // this has to be defined here or DefaultPostService tests fail with a NPE for some reason
     @Override
     public int count() {
         Integer count =  (Integer) dsl.selectCount()
                 .from(table())
                 .fetchOne(0, int.class);
-        System.out.println("**** COUNT VALUE " + count);
         return count;
     }
 }

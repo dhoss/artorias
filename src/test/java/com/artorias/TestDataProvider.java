@@ -24,7 +24,6 @@ public class TestDataProvider implements MockDataProvider {
     @Override
     public MockResult[] execute(MockExecuteContext ctx) throws SQLException {
         log.debug("Using TestDataProvider");
-        // You might need a DSLContext to create org.jooq.Result and org.jooq.Record objects
         DSLContext create = DSL.using(SQLDialect.POSTGRES_9_5);
         MockResult[] mock = new MockResult[1];
         String selectPostNoJoinRgx = "SELECT (\"\\w+\"\\.\"\\w+\"\\.\"\\w+\",?\\s)+FROM \"\\w+\"\\.\"\\w+\" WHERE \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" =.+";
@@ -54,23 +53,18 @@ public class TestDataProvider implements MockDataProvider {
 
         // count
         else if (sql.toUpperCase().equals(selectCount)) {
-            System.out.println("**** GOT TO COUNT");
             Field count = DSL.field("count(*)");
             Result<Record> result = create.newResult(count);
-            result.add(create.newRecord(count));
+            result.add(create.newRecord(count)); // pass count to both newRecord and newResult or things get fucky
             result.get(0).setValue(DSL.field("count(*)", Integer.class),1);
             mock[0] = new MockResult(1, result);
-            System.out.println("**** MOCK COUNT " + mock);
         }
 
         // list(page)
         else if (sql.toUpperCase().contains(listPostQueryRgx)) {
-            System.out.println("**** GOT TO LIST QUERY");
             Result<Record> result = buildSinglePostWithAuthorResult(create);
             mock[0] = new MockResult(1, result);
         }
-
-
 
         // add()/delete()/update()
         else if (sql.toUpperCase().contains("INSERT") || sql.toUpperCase().contains("UPDATE") || sql.toUpperCase().contains("DELETE")) {
