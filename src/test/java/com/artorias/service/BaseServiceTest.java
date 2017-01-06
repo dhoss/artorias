@@ -54,6 +54,7 @@ public abstract class BaseServiceTest<E, P> {
         expectedRecord = expectedRecord();
         searchTerm = searchTerm();
 
+
     }
 
     @Test

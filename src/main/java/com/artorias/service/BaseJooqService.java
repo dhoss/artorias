@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.ParameterizedType;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -86,10 +87,17 @@ public abstract class BaseJooqService<R extends Record, T extends Table<R>, E, D
     }
     ////////////////////
 
-    public Integer count() {
-        return (Integer) dsl.selectCount()
+    public int count() {
+        System.out.println("***** COUNT FROM BASE JOOQ");
+        System.out.println("**** DSL COUNT " + DSL.count());
+        String query = dsl.select(DSL.count())
+                .from(table()).getSQL();
+        System.out.println("***** COUNT QUERY " + query);
+        /*Integer count =  (Integer) dsl.selectCount()
                 .from(table())
                 .fetchOne().getValue(0);
+        System.out.println("**** COUNT VALUE " + count);*/
+        return 1;//count;
     }
 
     // to be implemented by the inheriting class

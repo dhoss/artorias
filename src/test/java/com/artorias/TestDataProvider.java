@@ -29,7 +29,8 @@ public class TestDataProvider implements MockDataProvider {
         MockResult[] mock = new MockResult[1];
         String selectPostNoJoinRgx = "SELECT (\"\\w+\"\\.\"\\w+\"\\.\"\\w+\",?\\s)+FROM \"\\w+\"\\.\"\\w+\" WHERE \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" =.+";
         String selectPostJoinAuthorRgx = "SELECT \"P\".\"POST_ID\", \"P\".\"TITLE\", \"P\".\"SLUG\", \"P\".\"BODY\", \"P\".\"AUTHOR_ID\", \"P\".\"CREATED_ON\", \"P\".\"UPDATED_ON\", \"P\".\"PUBLISHED_ON\", \"A\".\"NAME\" FROM \"BLOG\".\"POST\" AS \"P\", \"BLOG\".\"AUTHOR\" AS \"A\" JOIN \"BLOG\".\"AUTHOR\" AS \"A\" ON \"P\".\"AUTHOR_ID\" = \"A\".\"AUTHOR_ID\" WHERE \"P\".\"SLUG\"";
-                //"SELECT (\"\\w+\"\\.\"\\w+\"\\.\"\\w+\",?\\s)+FROM \"\\w+\"\\.\"\\w+\"(, \"\\w+\"\\.\"\\w+\")? JOIN \"\\w+\"\\.\"\\w+\" ON \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" = \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" WHERE \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" =.+";
+        String listPostQueryRgx = "SELECT \"BLOG\".\"POST\".\"POST_ID\", \"BLOG\".\"POST\".\"TITLE\", \"BLOG\".\"POST\".\"SLUG\", \"BLOG\".\"POST\".\"BODY\", \"BLOG\".\"POST\".\"AUTHOR_ID\", \"BLOG\".\"POST\".\"CREATED_ON\", \"BLOG\".\"POST\".\"UPDATED_ON\", \"BLOG\".\"POST\".\"PUBLISHED_ON\", \"BLOG\".\"AUTHOR\".\"NAME\" AS \"AUTHOR_NAME\" FROM \"BLOG\".\"POST\", \"BLOG\".\"AUTHOR\" ORDER BY \"BLOG\".\"POST\".\"UPDATED_ON\" DESC, \"BLOG\".\"POST\".\"CREATED_ON\" DESC LIMIT";
+        String selectCount = "SELECT COUNT(*) FROM \"BLOG\".\"POST\"";
 
         // The execute context contains SQL string(s), bind values, and other meta-data
         String sql = ctx.sql();
@@ -45,11 +46,31 @@ public class TestDataProvider implements MockDataProvider {
             mock[0] = new MockResult(1, result);
         }
 
-        else if (sql.toUpperCase().contains(selectPostJoinAuthorRgx)) {//matches(selectPostJoinAuthorRgx)) {
-            System.out.println("******** BUILDING JOIN RESULT");
+        // findWithRelated()
+        else if (sql.toUpperCase().contains(selectPostJoinAuthorRgx)) {
             Result<Record> result = buildSinglePostWithAuthorResult(create);
             mock[0] = new MockResult(1, result);
         }
+
+        // count
+        else if (sql.toUpperCase().equals(selectCount)) {
+            System.out.println("**** GOT TO COUNT");
+            Field count = DSL.field("count(*)");
+            Result<Record> result = create.newResult(count);
+            result.add(create.newRecord(count));
+            result.get(0).setValue(DSL.field("count(*)", Integer.class),1);
+            mock[0] = new MockResult(1, result);
+            System.out.println("**** MOCK COUNT " + mock);
+        }
+
+        // list(page)
+        else if (sql.toUpperCase().contains(listPostQueryRgx)) {
+            System.out.println("**** GOT TO LIST QUERY");
+            Result<Record> result = buildSinglePostWithAuthorResult(create);
+            mock[0] = new MockResult(1, result);
+        }
+
+
 
         // add()/delete()/update()
         else if (sql.toUpperCase().contains("INSERT") || sql.toUpperCase().contains("UPDATE") || sql.toUpperCase().contains("DELETE")) {

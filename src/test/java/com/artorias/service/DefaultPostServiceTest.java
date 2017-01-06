@@ -9,11 +9,14 @@ import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
+import org.junit.Before;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import static com.artorias.database.jooq.tables.Author.AUTHOR;
 import static com.artorias.database.jooq.tables.Post.POST;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.sql.Timestamp;
 import java.util.Arrays;
@@ -23,7 +26,9 @@ import java.util.Map;
 /**
  * Created by devin on 12/16/16.
  */
-public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, Post>{
+public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, Post> {
+
+    DefaultPostService spyService;
 
     //// base methods /////
     @Override
@@ -91,12 +96,24 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
         Assert.assertEquals(service.table(), POST);
     }
 
-   /* @Test
-    public void listAsDto() {
-        List<Map<String, Object>> postsMap = buildPostMap();
-        PostDTO dto = dto();
+    @Test
+    public void list() {
+        spyService = spy(service);
+        when(spyService.count()).thenReturn(1);
+        List<Map<String, Object>> postMap = buildPostMap();
+        System.out.println("****POST MAP " + postMap);
+        Assert.assertEquals(service.list(1), postMap);
+    }
 
-        Assert.assertEquals(service.listAsDto(Arrays.asList(buildSinglePostWithAuthorResult(this.create))), dto);
+   /* @Test(enabled=false)
+    public void listAsDto() {
+        PostDTO dto = dto();
+        List<Map<String, Object>> postMap = buildPostMap();
+        System.out.println("*****DTO " + dto);
+        System.out.println("**** POST MAP " + postMap);
+        System.out.println("***** LIST " + service.listAsDto(postMap));
+
+        //Assert.assertEquals(service.listAsDto(buildPostMap()), Arrays.asList(dto));
     }*/
 
     //// utility methods /////
@@ -106,7 +123,7 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
 
     private Author expectedAuthor() {
         Timestamp t = ts();
-        return new Author(1, "Test Author", null, null, t, t, null, null);
+        return new Author(1, "Test Author", "", "", t, t, null, null);
     }
 
     private Timestamp ts() {
@@ -154,9 +171,21 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
         return result;
     }
 
-    /*private List<Map<String, Object>> buildPostMap() {
-        Map<String, Object> m = ImmutableMap.of("")
-    }*/
+    private List<Map<String, Object>> buildPostMap() {
+        Timestamp ts = new Timestamp(1481136454);
+        Map<String, Object> m = ImmutableMap.<String, Object>builder()
+                .put("post_id", "1")
+                .put("title", "Test Post")
+                .put("slug", "test-post")
+                .put("body", "This is a test post")
+                .put("author_id", "1")
+                .put("created_on", ts.toString())
+                .put("updated_on", ts.toString())
+                .put("published_on", ts.toString())
+                .put("AUTHOR_NAME", "Test Author")
+                .build();
+        return Arrays.asList(m);
+    }
 
 
     //// end utility methods /////

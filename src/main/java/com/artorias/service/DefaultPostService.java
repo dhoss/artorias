@@ -6,6 +6,7 @@ import com.artorias.database.jooq.tables.records.AuthorRecord;
 import com.artorias.database.jooq.tables.records.PostRecord;
 import com.artorias.dto.PostDTO;
 import com.artorias.util.Pagination;
+import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -15,6 +16,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -52,14 +54,27 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
     // fix this to allow for more flexible queries instead of overriding the whole thing
     @Override
     public List<Map<String, Object>> list(int pageNumber) {
+        System.out.println("**** GOT TO LIST");
         Pagination pager = new Pagination(count());
-        return dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, POST.UPDATED_ON, POST.PUBLISHED_ON, AUTHOR.NAME.as("AUTHOR_NAME"))
+        System.out.println("***** PAGINATION");
+        String sql = dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, POST.UPDATED_ON, POST.PUBLISHED_ON, AUTHOR.NAME.as("AUTHOR_NAME"))
+                .from(POST, AUTHOR)
+                .orderBy(POST.UPDATED_ON.desc(), POST.CREATED_ON.desc())
+                .limit(pageSize)
+                .offset(pager.offsetFromPage(pageNumber))
+                .getSQL();
+        System.out.println("***** LIST SQL " + sql);
+        Timestamp ts = new Timestamp(1481136454);
+
+        List<Map<String, Object>> res = dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, POST.UPDATED_ON, POST.PUBLISHED_ON, AUTHOR.NAME.as("AUTHOR_NAME"))
                 .from(POST, AUTHOR)
                 .orderBy(POST.UPDATED_ON.desc(), POST.CREATED_ON.desc())
                 .limit(pageSize)
                 .offset(pager.offsetFromPage(pageNumber))
                 .fetch()
                 .intoMaps();
+        System.out.println("*****MAP IN LIST " + res);
+        return res;
     }
 
     public PostDTO findWithRelated(String slug) {
@@ -93,9 +108,11 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
     // could probably generalize these in the base class
     @Override
     public List<PostDTO> listAsDto(List<Map<String,Object>> results) {
+        System.out.println("**** MAP FROM ASDTO " + results);
         java.lang.reflect.Type targetListType = new TypeToken<List<PostDTO>>() {
         }.getType();
         List<PostDTO> dto =  mapper.map(results, targetListType);
+        System.out.println("***** DTO RESULT " + dto);
         return dto;
     }
 
@@ -135,7 +152,15 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
     }
 
     public List<PostDTO> pagedListAsDto(int pageNumber) {
-        System.out.println("****** RESULTS AS MAP " + list(pageNumber));
         return listAsDto(list(pageNumber));
+    }
+
+    @Override
+    public int count() {
+        Integer count =  (Integer) dsl.selectCount()
+                .from(table())
+                .fetchOne(0, int.class);
+        System.out.println("**** COUNT VALUE " + count);
+        return count;
     }
 }
