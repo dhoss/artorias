@@ -87,16 +87,10 @@ public abstract class BaseJooqService<R extends Record, T extends Table<R>, E, D
     ////////////////////
 
     public int count() {
-        System.out.println("***** COUNT FROM BASE JOOQ");
-        System.out.println("**** DSL COUNT " + DSL.count());
-        String query = dsl.select(DSL.count())
-                .from(table()).getSQL();
-        System.out.println("***** COUNT QUERY " + query);
-        /*Integer count =  (Integer) dsl.selectCount()
+        Integer count =  (Integer) dsl.selectCount()
                 .from(table())
                 .fetchOne().getValue(0);
-        System.out.println("**** COUNT VALUE " + count);*/
-        return 1;//count;
+        return count;
     }
 
     // to be implemented by the inheriting class
