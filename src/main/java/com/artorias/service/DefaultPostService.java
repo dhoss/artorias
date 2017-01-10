@@ -66,17 +66,17 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
     }
 
     public PostDTO findWithRelated(String slug) {
-        Author a = AUTHOR.as("a");
-        Post p = POST.as("p");
-
-        SelectConditionStep<Record9<Integer, String, String, String, Integer, Timestamp, Timestamp, Timestamp, String>> sql = this.dsl.select(p.POST_ID, p.TITLE, p.SLUG, p.BODY, p.AUTHOR_ID, p.CREATED_ON, p.UPDATED_ON, p.PUBLISHED_ON, a.NAME)
-                .from(p, a)
-                .join(a)
-                .on(p.AUTHOR_ID.equal(a.AUTHOR_ID))
-                .where(p.SLUG.equal(slug));
-        PostRecord post = sql.fetchOneInto(POST);
-        AuthorRecord author = sql.fetchOneInto(AUTHOR);
-        return dto(post, author);
+        System.out.println("***** FIND WITH RELATED SQL " + this.dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, POST.UPDATED_ON, POST.PUBLISHED_ON, AUTHOR.NAME.as("AUTHOR_NAME"))
+                .from(POST, AUTHOR)
+                .join(AUTHOR)
+                .on(POST.AUTHOR_ID.equal(AUTHOR.AUTHOR_ID))
+                .where(POST.SLUG.equal(slug)).getSQL());
+        return this.dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, POST.UPDATED_ON, POST.PUBLISHED_ON, AUTHOR.NAME.as("AUTHOR_NAME"))
+                .from(POST, AUTHOR)
+                .join(AUTHOR)
+                .on(POST.AUTHOR_ID.equal(AUTHOR.AUTHOR_ID))
+                .where(POST.SLUG.equal(slug))
+                .fetchOneInto(PostDTO.class);
     }
 
     @Override

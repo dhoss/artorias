@@ -27,12 +27,12 @@ public class TestDataProvider implements MockDataProvider {
         DSLContext create = DSL.using(SQLDialect.POSTGRES_9_5);
         MockResult[] mock = new MockResult[1];
         String selectPostNoJoinRgx = "SELECT (\"\\w+\"\\.\"\\w+\"\\.\"\\w+\",?\\s)+FROM \"\\w+\"\\.\"\\w+\" WHERE \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" =.+";
-        String selectPostJoinAuthorRgx = "SELECT \"P\".\"POST_ID\", \"P\".\"TITLE\", \"P\".\"SLUG\", \"P\".\"BODY\", \"P\".\"AUTHOR_ID\", \"P\".\"CREATED_ON\", \"P\".\"UPDATED_ON\", \"P\".\"PUBLISHED_ON\", \"A\".\"NAME\" FROM \"BLOG\".\"POST\" AS \"P\", \"BLOG\".\"AUTHOR\" AS \"A\" JOIN \"BLOG\".\"AUTHOR\" AS \"A\" ON \"P\".\"AUTHOR_ID\" = \"A\".\"AUTHOR_ID\" WHERE \"P\".\"SLUG\"";
+        String selectPostJoinAuthorRgx = ".+ JOIN \"BLOG\".\"AUTHOR\" ON \"BLOG\".\"POST\".\"AUTHOR_ID\" .+";
         String listPostQueryRgx = "SELECT \"BLOG\".\"POST\".\"POST_ID\", \"BLOG\".\"POST\".\"TITLE\", \"BLOG\".\"POST\".\"SLUG\", \"BLOG\".\"POST\".\"BODY\", \"BLOG\".\"POST\".\"AUTHOR_ID\", \"BLOG\".\"POST\".\"CREATED_ON\", \"BLOG\".\"POST\".\"UPDATED_ON\", \"BLOG\".\"POST\".\"PUBLISHED_ON\", \"BLOG\".\"AUTHOR\".\"NAME\" AS \"AUTHOR_NAME\" FROM \"BLOG\".\"POST\", \"BLOG\".\"AUTHOR\" ORDER BY \"BLOG\".\"POST\".\"UPDATED_ON\" DESC, \"BLOG\".\"POST\".\"CREATED_ON\" DESC LIMIT";
         String selectCount = "SELECT COUNT(*) FROM \"BLOG\".\"POST\"";
 
-        // The execute context contains SQL string(s), bind values, and other meta-data
         String sql = ctx.sql();
+
 
         // Exceptions are propagated through the JDBC and jOOQ APIs
         if (sql.toUpperCase().startsWith("DROP")) {
@@ -46,7 +46,7 @@ public class TestDataProvider implements MockDataProvider {
         }
 
         // findWithRelated()
-        else if (sql.toUpperCase().contains(selectPostJoinAuthorRgx)) {
+        else if (sql.toUpperCase().matches(selectPostJoinAuthorRgx)){
             Result<Record> result = buildSinglePostWithAuthorResult(create);
             mock[0] = new MockResult(1, result);
         }
