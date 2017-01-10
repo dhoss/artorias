@@ -5,14 +5,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.ParameterizedType;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by devin on 11/13/16.
@@ -24,6 +21,8 @@ public abstract class BaseJooqService<R extends Record, T extends Table<R>, E, D
     protected int pageSize;
 
     private Class<E> recordClass;
+
+    private Class<DT> dtoClass;
 
     @Autowired
     protected DSLContext dsl;
@@ -62,15 +61,15 @@ public abstract class BaseJooqService<R extends Record, T extends Table<R>, E, D
     ///////////////////
 
     // READ ///////////
-    public List<Map<String, Object>> list(int pageNumber) {
+    public List<DT> list(int pageNumber) {
         Pagination pager = new Pagination(count());
         return dsl.select()
                 .from(table())
                 .orderBy(DSL.field("UPDATED_ON").desc(), DSL.field("CREATED_ON").desc())
                 .limit(pageSize)
                 .offset(pager.offsetFromPage(pageNumber))
-                .fetch()
-                .intoMaps();
+                .fetchInto(dtoClass);
+//                .intoMaps();
     }
     ////////////////////
 
@@ -107,10 +106,6 @@ public abstract class BaseJooqService<R extends Record, T extends Table<R>, E, D
     protected abstract R buildRecord(E e);
 
     public abstract E find(String n);
-
-    public abstract DT singleAsDto(E p);
-
-    public abstract List<DT> listAsDto(List<Map<String,Object>> p);
 
     private void setDefaults() {
         this.recordClass = (Class<E>) ((ParameterizedType) getClass()

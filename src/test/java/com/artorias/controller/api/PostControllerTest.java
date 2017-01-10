@@ -71,7 +71,7 @@ public class PostControllerTest {
 
     @Test
     public void list_success() throws Exception {
-        when(postService.pagedListAsDto(any(int.class))).thenReturn(Arrays.asList(postDto));
+        when(postService.list(any(int.class))).thenReturn(Arrays.asList(postDto));
         this.mockMvc.perform(get("/api/posts").accept(MediaType.parseMediaType("application/json;charset=UTF-8")))
                 .andDo(print())
                 .andExpect(status().isOk())

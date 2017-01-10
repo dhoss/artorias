@@ -31,8 +31,8 @@ import static com.artorias.database.jooq.tables.Post.POST;
 @Service
 public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias.database.jooq.tables.Post, com.artorias.database.jooq.tables.pojos.Post, PostDTO> {
 
-    @Autowired
-    private ModelMapper mapper;
+    /*@Autowired
+    private ModelMapper mapper;*/
 
     @Autowired
     private DSLContext dsl;
@@ -53,18 +53,16 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
 
     // fix this to allow for more flexible queries instead of overriding the whole thing
     @Override
-    public List<Map<String, Object>> list(int pageNumber) {
+    public List<PostDTO> list(int pageNumber) {
         Pagination pager = new Pagination(count());
         Timestamp ts = new Timestamp(1481136454);
 
-        List<Map<String, Object>> res = dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, POST.UPDATED_ON, POST.PUBLISHED_ON, AUTHOR.NAME.as("AUTHOR_NAME"))
+       return dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, POST.UPDATED_ON, POST.PUBLISHED_ON, AUTHOR.NAME.as("AUTHOR_NAME"))
                 .from(POST, AUTHOR)
                 .orderBy(POST.UPDATED_ON.desc(), POST.CREATED_ON.desc())
                 .limit(pageSize)
                 .offset(pager.offsetFromPage(pageNumber))
-                .fetch()
-                .intoMaps();
-        return res;
+                .fetchInto(PostDTO.class);
     }
 
     public PostDTO findWithRelated(String slug) {
@@ -95,22 +93,6 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
         return POST;
     }
 
-    // could probably generalize these in the base class
-    @Override
-    public List<PostDTO> listAsDto(List<Map<String,Object>> results) {
-        java.lang.reflect.Type targetListType = new TypeToken<List<PostDTO>>() {
-        }.getType();
-        List<PostDTO> dto =  mapper.map(results, targetListType);
-        return dto;
-    }
-
-    @Override
-    public PostDTO singleAsDto(com.artorias.database.jooq.tables.pojos.Post result) {
-        java.lang.reflect.Type targetListType = new TypeToken<PostDTO>() {
-        }.getType();
-        return mapper.map(result, targetListType);
-    }
-
     // put this in a base class
     private PostDTO dto(PostRecord p, AuthorRecord a) {
         PostDTO dto = new PostDTO();
@@ -137,10 +119,6 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
                 author.getValue(AUTHOR.IS_BANNED),
                 author.getValue(AUTHOR.IS_ACTIVE)
         );
-    }
-
-    public List<PostDTO> pagedListAsDto(int pageNumber) {
-        return listAsDto(list(pageNumber));
     }
 
     // this has to be defined here or DefaultPostService tests fail with a NPE for some reason

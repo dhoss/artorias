@@ -4,15 +4,22 @@ import com.artorias.database.jooq.tables.pojos.Author;
 import com.artorias.database.jooq.tables.pojos.Post;
 import com.artorias.dto.PostDTO;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.reflect.TypeToken;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 import static com.artorias.database.jooq.tables.Author.AUTHOR;
 import static com.artorias.database.jooq.tables.Post.POST;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Type;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
@@ -22,6 +29,9 @@ import java.util.Map;
  * Created by devin on 12/16/16.
  */
 public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, Post> {
+
+    @Autowired
+    ModelMapper modelMapper;
 
     //// base methods /////
     @Override
@@ -91,22 +101,8 @@ public class DefaultPostServiceTest extends BaseServiceTest<DefaultPostService, 
 
     @Test
     public void list() {
-        List<Map<String, Object>> postMap = buildPostMap();
-        for (Map expectedPosts : postMap) {
-            for (Map actualPosts : service.list(1)) {
-                for (final Object expectedKey : expectedPosts.keySet()) {
-                    Assert.assertTrue(actualPosts.containsKey(expectedKey));
-                }
-            }
-        }
-    }
-
-    // this test fails, the map doesn't get properly mapped to the DTO object, but it's fine when the app runs normally
-    @Test(enabled = false)
-    public void listAsDto() {
         PostDTO dto = dto();
-        List<Map<String, Object>> postMap = buildPostMap();
-        Assert.assertEquals(service.listAsDto(buildPostMap()), Arrays.asList(dto));
+        Assert.assertEquals(service.list(1), Arrays.asList(dto));
     }
 
     //// utility methods /////

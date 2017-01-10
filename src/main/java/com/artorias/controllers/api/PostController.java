@@ -32,6 +32,6 @@ public class PostController {
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PostDTO> list(@RequestParam(name="page", defaultValue = "1") int page) {
-        return service.pagedListAsDto(page);
+        return service.list(page);
     }
 }
