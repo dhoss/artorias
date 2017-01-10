@@ -93,34 +93,6 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
         return POST;
     }
 
-    // put this in a base class
-    private PostDTO dto(PostRecord p, AuthorRecord a) {
-        PostDTO dto = new PostDTO();
-        dto.setPostId(p.getValue(POST.POST_ID));
-        dto.setTitle(p.getValue(POST.TITLE));
-        dto.setSlug(p.getValue(POST.SLUG));
-        dto.setBody(p.getValue(POST.BODY));
-        dto.setAuthorName(a.getValue(AUTHOR.NAME));
-        dto.setAuthorId(p.getValue(POST.AUTHOR_ID));
-        dto.setCreatedOn(p.getValue(POST.CREATED_ON));
-        dto.setUpdatedOn(p.getValue(POST.UPDATED_ON));
-        dto.setPublishedOn(p.getValue(POST.PUBLISHED_ON));
-        return dto;
-    }
-
-    private com.artorias.database.jooq.tables.pojos.Author buildAuthor(AuthorRecord author) {
-        return new com.artorias.database.jooq.tables.pojos.Author(
-                author.getValue(AUTHOR.AUTHOR_ID),
-                author.getValue(AUTHOR.NAME),
-                author.getValue(AUTHOR.EMAIL),
-                author.getValue(AUTHOR.PASSWORD),
-                author.getValue(AUTHOR.CREATED_ON),
-                author.getValue(AUTHOR.UPDATED_ON),
-                author.getValue(AUTHOR.IS_BANNED),
-                author.getValue(AUTHOR.IS_ACTIVE)
-        );
-    }
-
     // this has to be defined here or DefaultPostService tests fail with a NPE for some reason
     @Override
     public int count() {
