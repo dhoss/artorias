@@ -13,26 +13,30 @@ import com.google.common.collect.Range;
 
 public class Pagination {
 
-    public int currentPage;
-    public int firstPage;
-    public int lastPage;
-    public int pageSize;
-    public int items;
+    private int currentPage;
+    private int firstPage;
+    private int lastPage;
+    private int pageSize;
+    private int itemCount;
 
     public Pagination(int count) {
-        this.items = count;
+        this.itemCount = count;
         this.firstPage = 1;
         this.currentPage = 1;
         this.pageSize = 50;
     }
 
     // need to throw an error if this never gets set
-    public void setItems(int count) {
-        this.items = count;
+    public void setItemCount(int count) {
+        this.itemCount = count;
         this.lastPage = numberOfPages(count);
     }
 
-    public int lastPage() {
+    public int getItemCount() {
+        return this.itemCount;
+    }
+
+    public int last() {
         return numberOfPages();
     }
 
@@ -51,7 +55,7 @@ public class Pagination {
     }
 
     public int next() {
-        if (lastPage() <= currentPage) {
+        if (last() <= currentPage) {
             return currentPage;
         }
         return currentPage + 1;
@@ -90,14 +94,14 @@ public class Pagination {
         return pages;
     }
 
-    // need to make a lot of noise if this.items is null
+    // need to make a lot of noise if this.itemCount is null
     public int numberOfPages() {
-        int pages = numberOfPages(this.items);
+        int pages = numberOfPages(this.itemCount);
         return pages;
     }
 
     public List<Integer> pages() {
-        return new ArrayList<>(ContiguousSet.create(Range.closed(this.firstPage, lastPage()), DiscreteDomain.integers()));
+        return new ArrayList<>(ContiguousSet.create(Range.closed(this.firstPage, last()), DiscreteDomain.integers()));
     }
 
     public int pageToInt(String current) {
