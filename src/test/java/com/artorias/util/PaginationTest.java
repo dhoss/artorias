@@ -128,4 +128,24 @@ public class PaginationTest {
         Assert.assertEquals(page.pageToInt("1"), 1);
     }
 
+    @Test
+    public void nextPage_success() {
+        // only one page of data, so next page is 1
+        Assert.assertEquals(page.next(), 1);
+
+        // 4 total pages
+        page.setItemCount(200);
+        page.setCurrent(2);
+        Assert.assertEquals(page.next(), 3);
+    }
+
+    @Test
+    public void previousPage_success() {
+        Assert.assertEquals(page.previous(), 1);
+
+        page.setItemCount(200);
+        page.setCurrent(4);
+        Assert.assertEquals(page.previous(), 3);
+    }
+
 }
