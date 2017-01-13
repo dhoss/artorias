@@ -108,6 +108,10 @@ public class PaginationTest {
         Assert.assertEquals(page.numberOfPages(itemCount), expectedNumberOfPages);
         page.setItemCount(itemCount);
         Assert.assertEquals(page.numberOfPages(), expectedNumberOfPages);
+
+        page.setItemCount(1);
+        Assert.assertEquals(page.numberOfPages(1), 1);
+        Assert.assertEquals(page.numberOfPages(), 1);
     }
 
     @Test
