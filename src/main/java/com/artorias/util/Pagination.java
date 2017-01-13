@@ -68,11 +68,11 @@ public class Pagination {
         return currentPage - 1;
     }
 
-    public void setSize(int size) {
+    public void setPageSize(int size) {
         this.pageSize = size;
     }
 
-    public int size() {
+    public int getPageSize() {
         return pageSize;
     }
 
@@ -101,7 +101,11 @@ public class Pagination {
     }
 
     public List<Integer> pages() {
-        return new ArrayList<>(ContiguousSet.create(Range.closed(this.firstPage, last()), DiscreteDomain.integers()));
+        ArrayList<Integer> pages = new ArrayList<>();
+        for (int i = this.firstPage; i<=last(); i++) {
+            pages.add(i);
+        }
+        return pages;
     }
 
     public int pageToInt(String current) {
