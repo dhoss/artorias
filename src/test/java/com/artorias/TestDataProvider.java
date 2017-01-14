@@ -1,5 +1,6 @@
 package com.artorias;
 
+import com.artorias.database.jooq.tables.records.AuthorRecord;
 import com.artorias.database.jooq.tables.records.PostRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.jooq.*;
@@ -8,8 +9,11 @@ import org.jooq.tools.jdbc.MockDataProvider;
 import org.jooq.tools.jdbc.MockExecuteContext;
 import org.jooq.tools.jdbc.MockResult;
 
+import javax.security.sasl.AuthorizeCallback;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.artorias.database.jooq.tables.Post.POST;
 import static com.artorias.database.jooq.tables.Author.AUTHOR;
@@ -26,9 +30,11 @@ public class TestDataProvider implements MockDataProvider {
         log.debug("Using TestDataProvider");
         DSLContext create = DSL.using(SQLDialect.POSTGRES_9_5);
         MockResult[] mock = new MockResult[1];
-        String selectPostNoJoinRgx = "SELECT (\"\\w+\"\\.\"\\w+\"\\.\"\\w+\",?\\s)+FROM \"\\w+\"\\.\"\\w+\" WHERE \"\\w+\"\\.\"\\w+\"\\.\"\\w+\" =.+";
-        String selectPostJoinAuthorRgx = ".+ JOIN \"BLOG\".\"AUTHOR\" ON \"BLOG\".\"POST\".\"AUTHOR_ID\" .+";
-        String listPostQueryRgx = "SELECT \"BLOG\".\"POST\".\"POST_ID\", \"BLOG\".\"POST\".\"TITLE\", \"BLOG\".\"POST\".\"SLUG\", \"BLOG\".\"POST\".\"BODY\", \"BLOG\".\"POST\".\"AUTHOR_ID\", \"BLOG\".\"POST\".\"CREATED_ON\", \"BLOG\".\"POST\".\"UPDATED_ON\", \"BLOG\".\"POST\".\"PUBLISHED_ON\", \"BLOG\".\"AUTHOR\".\"NAME\" AS \"AUTHOR_NAME\" FROM \"BLOG\".\"POST\", \"BLOG\".\"AUTHOR\" ORDER BY \"BLOG\".\"POST\".\"UPDATED_ON\" DESC, \"BLOG\".\"POST\".\"CREATED_ON\" DESC LIMIT";
+        String selectPostByIdRgx ="SELECT \"BLOG\".\"POST\".\"POST_ID\", \"BLOG\".\"POST\".\"TITLE\", \"BLOG\".\"POST\".\"SLUG\", \"BLOG\".\"POST\".\"BODY\", \"BLOG\".\"POST\".\"AUTHOR_ID\", \"BLOG\".\"POST\".\"CREATED_ON\", \"BLOG\".\"POST\".\"UPDATED_ON\", \"BLOG\".\"POST\".\"PUBLISHED_ON\" FROM \"BLOG\".\"POST\" WHERE \"BLOG\".\"POST\".\"POST_ID\" =";
+        String selectPostBySlugRgx = "SELECT \"BLOG\".\"POST\".\"POST_ID\", \"BLOG\".\"POST\".\"TITLE\", \"BLOG\".\"POST\".\"SLUG\", \"BLOG\".\"POST\".\"BODY\", \"BLOG\".\"POST\".\"AUTHOR_ID\", \"BLOG\".\"POST\".\"CREATED_ON\", \"BLOG\".\"POST\".\"UPDATED_ON\", \"BLOG\".\"POST\".\"PUBLISHED_ON\" FROM \"BLOG\".\"POST\" WHERE \"BLOG\".\"POST\".\"SLUG\" =";
+        String selectAuthorRgx = "SELECT \"BLOG\".\"AUTHOR\"";
+        String selectPostJoinAuthorRgx = "SELECT \"BLOG\".\"POST\".\"POST_ID\", \"BLOG\".\"POST\".\"TITLE\", \"BLOG\".\"POST\".\"SLUG\", \"BLOG\".\"POST\".\"BODY\", \"BLOG\".\"POST\".\"AUTHOR_ID\", \"BLOG\".\"POST\".\"CREATED_ON\", \"BLOG\".\"POST\".\"UPDATED_ON\", \"BLOG\".\"POST\".\"PUBLISHED_ON\", \"BLOG\".\"AUTHOR\".\"NAME\" AS \"AUTHOR_NAME\" FROM \"BLOG\".\"POST\", \"BLOG\".\"AUTHOR\" JOIN \"BLOG\".\"AUTHOR\" ON \"BLOG\".\"POST\".\"AUTHOR_ID\" = \"BLOG\".\"AUTHOR\".\"AUTHOR_ID\" WHERE \"BLOG\".\"POST\".\"SLUG\"";
+        String listPostQueryRgx = "SELECT \"BLOG\".\"POST\".\"POST_ID\", \"BLOG\".\"POST\".\"TITLE\", \"BLOG\".\"POST\".\"SLUG\", \"BLOG\".\"POST\".\"BODY\", \"BLOG\".\"POST\".\"AUTHOR_ID\", \"BLOG\".\"POST\".\"CREATED_ON\", \"BLOG\".\"POST\".\"UPDATED_ON\", \"BLOG\".\"POST\".\"PUBLISHED_ON\", \"BLOG\".\"AUTHOR\".\"NAME\" AS \"AUTHOR_NAME\" FROM \"BLOG\".\"POST\", \"BLOG\".\"AUTHOR\" ORDER BY \"BLOG\".\"POST\".\"UPDATED_ON\" DESC, \"BLOG\".\"POST\".\"CREATED_ON\" DESC LIMIT .+";
         String selectCount = "SELECT COUNT(*) FROM \"BLOG\".\"POST\"";
 
         String sql = ctx.sql();
@@ -39,14 +45,24 @@ public class TestDataProvider implements MockDataProvider {
             throw new SQLException("Statement not supported: " + sql);
         }
 
-        // find()
-        else if (sql.toUpperCase().matches(selectPostNoJoinRgx)) {
+        // post find()
+        else if (sql.toUpperCase().contains(selectPostByIdRgx)) {
             Result<PostRecord> result = buildSinglePostResult(create);
             mock[0] = new MockResult(1, result);
         }
 
+        else if (sql.toUpperCase().contains(selectPostBySlugRgx)) {
+            Result<PostRecord> result = buildSinglePostResult(create);
+            mock[0] = new MockResult(1, result);
+        }
+
+        // author find()
+        else if (sql.toUpperCase().contains(selectAuthorRgx)) {
+            Result<AuthorRecord> result = buildSingleAuthorResult(create);
+            mock[0] = new MockResult(1, result);
+        }
         // findWithRelated()
-        else if (sql.toUpperCase().matches(selectPostJoinAuthorRgx)){
+        else if (sql.toUpperCase().contains(selectPostJoinAuthorRgx)){
             Result<Record> result = buildSinglePostWithAuthorResult(create);
             mock[0] = new MockResult(1, result);
         }
@@ -61,7 +77,7 @@ public class TestDataProvider implements MockDataProvider {
         }
 
         // list(page)
-        else if (sql.toUpperCase().contains(listPostQueryRgx)) {
+        else if (sql.toUpperCase().matches(listPostQueryRgx)) {
             Result<Record> result = buildSinglePostWithAuthorResult(create);
             mock[0] = new MockResult(1, result);
         }
@@ -87,6 +103,22 @@ public class TestDataProvider implements MockDataProvider {
         result.get(0).setValue(POST.CREATED_ON, ts);
         result.get(0).setValue(POST.UPDATED_ON, ts);
         result.get(0).setValue(POST.PUBLISHED_ON, ts);
+
+        return result;
+    }
+
+    private Result<AuthorRecord> buildSingleAuthorResult(DSLContext create) {
+        Timestamp ts = new Timestamp(1481136454);
+        Result<AuthorRecord> result = create.newResult(AUTHOR);
+        result.add(create.newRecord(AUTHOR));
+        result.get(0).setValue(AUTHOR.AUTHOR_ID, 1);
+        result.get(0).setValue(AUTHOR.NAME, "Test Author");
+//        result.get(0).setValue(POST.SLUG, "test-post");
+        result.get(0).setValue(AUTHOR.EMAIL, "test@test.com");
+        result.get(0).setValue(AUTHOR.IS_ACTIVE, true);
+        result.get(0).setValue(AUTHOR.CREATED_ON, ts);
+        result.get(0).setValue(AUTHOR.UPDATED_ON, ts);
+        result.get(0).setValue(AUTHOR.IS_BANNED, false);
 
         return result;
     }

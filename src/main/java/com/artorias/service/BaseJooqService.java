@@ -69,7 +69,6 @@ public abstract class BaseJooqService<R extends Record, T extends Table<R>, E, D
                 .limit(pageSize)
                 .offset(pager.offsetFromPage(pageNumber))
                 .fetchInto(dtoClass);
-//                .intoMaps();
     }
     ////////////////////
 

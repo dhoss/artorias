@@ -31,9 +31,6 @@ import static com.artorias.database.jooq.tables.Post.POST;
 @Service
 public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias.database.jooq.tables.Post, com.artorias.database.jooq.tables.pojos.Post, PostDTO> {
 
-    /*@Autowired
-    private ModelMapper mapper;*/
-
     @Autowired
     private DSLContext dsl;
 
@@ -66,11 +63,6 @@ public class DefaultPostService extends BaseJooqService<PostRecord, com.artorias
     }
 
     public PostDTO findWithRelated(String slug) {
-        System.out.println("***** FIND WITH RELATED SQL " + this.dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, POST.UPDATED_ON, POST.PUBLISHED_ON, AUTHOR.NAME.as("AUTHOR_NAME"))
-                .from(POST, AUTHOR)
-                .join(AUTHOR)
-                .on(POST.AUTHOR_ID.equal(AUTHOR.AUTHOR_ID))
-                .where(POST.SLUG.equal(slug)).getSQL());
         return this.dsl.select(POST.POST_ID, POST.TITLE, POST.SLUG, POST.BODY, POST.AUTHOR_ID, POST.CREATED_ON, POST.UPDATED_ON, POST.PUBLISHED_ON, AUTHOR.NAME.as("AUTHOR_NAME"))
                 .from(POST, AUTHOR)
                 .join(AUTHOR)
