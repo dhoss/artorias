@@ -25,6 +25,17 @@ import static com.artorias.database.jooq.tables.Author.AUTHOR;
 @Slf4j
 public class TestDataProvider implements MockDataProvider {
 
+    Timestamp ts = new Timestamp(1481136454);
+    Field postId = DSL.field(POST.POST_ID);
+    Field postTitle = DSL.field(POST.TITLE);
+    Field postSlug = DSL.field(POST.SLUG);
+    Field postBody = DSL.field(POST.BODY);
+    Field postAuthor = DSL.field(POST.AUTHOR_ID);
+    Field postCreatedOn = DSL.field(POST.CREATED_ON);
+    Field postUpdatedOn = DSL.field(POST.UPDATED_ON);
+    Field postPublishedOn = DSL.field(POST.PUBLISHED_ON);
+    Field authorName = DSL.field(AUTHOR.NAME);
+
     @Override
     public MockResult[] execute(MockExecuteContext ctx) throws SQLException {
         log.debug("Using TestDataProvider");
@@ -40,6 +51,7 @@ public class TestDataProvider implements MockDataProvider {
         String sql = ctx.sql();
 
 
+        // this should loop through a list of SQL regex and return the associated result if it matches
         // Exceptions are propagated through the JDBC and jOOQ APIs
         if (sql.toUpperCase().startsWith("DROP")) {
             throw new SQLException("Statement not supported: " + sql);
@@ -92,7 +104,6 @@ public class TestDataProvider implements MockDataProvider {
     }
 
     private Result<PostRecord> buildSinglePostResult(DSLContext create) {
-        Timestamp ts = new Timestamp(1481136454);
         Result<PostRecord> result = create.newResult(POST);
         result.add(create.newRecord(POST));
         result.get(0).setValue(POST.POST_ID, 1);
@@ -125,18 +136,8 @@ public class TestDataProvider implements MockDataProvider {
 
     private Result<Record> buildSinglePostWithAuthorResult(DSLContext create) {
         Timestamp ts = new Timestamp(1481136454);
-        Field postId = DSL.field(POST.POST_ID);
-        Field postTitle = DSL.field(POST.TITLE);
-        Field postSlug = DSL.field(POST.SLUG);
-        Field postBody = DSL.field(POST.BODY);
-        Field postAuthor = DSL.field(POST.AUTHOR_ID);
-        Field postCreatedOn = DSL.field(POST.CREATED_ON);
-        Field postUpdatedOn = DSL.field(POST.UPDATED_ON);
-        Field postPublishedOn = DSL.field(POST.PUBLISHED_ON);
-        Field authorName = DSL.field(AUTHOR.NAME);
 
-        Result<Record> result = create.newResult(postId, postTitle, postSlug, postBody, postAuthor, postCreatedOn, postUpdatedOn, postPublishedOn, authorName);
-        result.add(create.newRecord(postId, postTitle, postSlug, postBody, postAuthor, postCreatedOn, postUpdatedOn, postPublishedOn, authorName));
+        Result<Record> result = buildPostAuthorResult(create);
         result.get(0).setValue(POST.POST_ID, 1);
         result.get(0).setValue(POST.TITLE, "Test Post");
         result.get(0).setValue(POST.SLUG, "test-post");
@@ -147,6 +148,22 @@ public class TestDataProvider implements MockDataProvider {
         result.get(0).setValue(POST.PUBLISHED_ON, ts);
         result.get(0).setValue(AUTHOR.NAME, "Test Author");
 
+        return result;
+    }
+
+    private Record buildPostAuthorRecord(DSLContext create) {
+        return create.newRecord(postId, postTitle, postSlug, postBody, postAuthor, postCreatedOn, postUpdatedOn, postPublishedOn, authorName);
+    }
+
+    private Result<Record> buildSingleUnpublishedPostWithAuthorResult(DSLContext create) {
+        Result<Record> result = buildPostAuthorResult(create);
+        result.get(0).setValue(POST.PUBLISHED_ON, null);
+        return result;
+    }
+
+    private Result<Record> buildPostAuthorResult(DSLContext create) {
+        Result<Record> result = create.newResult(postId, postTitle, postSlug, postBody, postAuthor, postCreatedOn, postUpdatedOn, postPublishedOn, authorName);
+        result.add(buildPostAuthorRecord(create));
         return result;
     }
 }
